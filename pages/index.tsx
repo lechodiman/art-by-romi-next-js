@@ -58,7 +58,7 @@ export default function Home() {
 
             <p className='tracking-widest uppercase '>Retratos de mascotas</p>
 
-            <Image className='w-80' src={tomi} alt='Retrato de gato'></Image>
+            <Image className='w-80' src={tomi} width={320} alt='Retrato de gato'></Image>
 
             <Link href='#' className='tracking-widest uppercase'>
               Ver lista de precios <ArrowLongRightIcon className='inline-block w-5 h-5' />
@@ -112,6 +112,8 @@ export default function Home() {
             <Image
               className='object-cover w-24 h-24 rounded-full'
               src={bruno}
+              width={96}
+              height={96}
               alt='Pintura de perro bruno'
             ></Image>
             <p className='font-serif tracking-widest text-center uppercase'>Bruno</p>
