@@ -10,7 +10,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        serif: ['Playfair Display SC', ...defaultTheme.fontFamily.serif],
+        serif: ['var(--font-playfair)', ...defaultTheme.fontFamily.serif],
       },
     },
   },
