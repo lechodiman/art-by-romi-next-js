@@ -1,9 +1,10 @@
 import { Transition, Dialog, Popover, Menu } from '@headlessui/react';
 import { Fragment, useState } from 'react';
-import { Bars3Icon } from '@heroicons/react/24/outline';
+import { Bars3Icon, ArrowLongRightIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import Image from 'next/image';
 import tomi from '../public/images/tomi.jpg';
+import bruno from '../public/images/bruno.jpg';
 
 const navigation = {
   pages: [
@@ -20,7 +21,7 @@ export default function Home() {
   return (
     <div className='bg-white text-zinc-500'>
       <div className='min-h-screen pt-6 bg-zinc-100'>
-        <div className='w-11/12 max-w-2xl mx-auto'>
+        <div className='w-10/12 max-w-2xl mx-auto'>
           <Menu>
             <header className=''>
               <div className='flex items-center justify-between'>
@@ -51,7 +52,7 @@ export default function Home() {
           </Menu>
 
           <div className='flex flex-col items-center space-y-5 text-center mt-14'>
-            <h2 className='font-serif text-5xl font-light tracking-wide uppercase text-neutral-700'>
+            <h2 className='font-serif text-5xl tracking-wide uppercase text-neutral-700'>
               Pintando Mascotas
             </h2>
 
@@ -59,10 +60,64 @@ export default function Home() {
 
             <Image className='w-80' src={tomi} alt='Retrato de gato'></Image>
 
-            <p className='tracking-widest uppercase'>Ver lista de precios</p>
+            <Link href='#' className='tracking-widest uppercase'>
+              Ver lista de precios <ArrowLongRightIcon className='inline-block w-5 h-5' />
+            </Link>
           </div>
         </div>
       </div>
+
+      <section>
+        <div className='w-10/12 max-w-2xl mx-auto'>
+          <div className='flex flex-col items-center space-y-5 text-center mt-14'>
+            <h2 className='font-serif text-3xl tracking-wide uppercase text-neutral-700'>
+              Acerca de mi
+            </h2>
+            <p className='text-sm'>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. At, temporibus
+              repudiandae perferendis et explicabo, necessitatibus officiis odit esse vero
+              eos excepturi quam incidunt rerum eum accusantium voluptatem quae laudantium
+              hic!
+            </p>
+            <p className='text-sm'>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. At, temporibus
+              repudiandae perferendis et explicabo, necessitatibus officiis odit esse vero
+              eos excepturi quam incidunt rerum eum accusantium voluptatem quae laudantium
+              hic!
+            </p>
+            <p className='text-sm'>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. At, temporibus
+              repudiandae perferendis et explicabo, necessitatibus officiis odit esse vero
+              eos excepturi quam incidunt rerum eum accusantium voluptatem quae laudantium
+              hic!
+            </p>
+
+            <Link href='#' className='tracking-widest uppercase'>
+              Ver Portafolio <ArrowLongRightIcon className='inline-block w-5 h-5' />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div className='w-10/12 max-w-2xl mx-auto'>
+          <div className='flex flex-col items-center space-y-5 text-center mt-14'>
+            <h2 className='font-serif text-3xl tracking-wide uppercase text-neutral-700'>
+              Testimonios
+            </h2>
+            <p className='text-sm'>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. At, temporibus
+              repudiandae perferendis et explicabo, necessitatibus officiis odit esse vero
+            </p>
+            <Image
+              className='object-cover w-24 h-24 rounded-full'
+              src={bruno}
+              alt='Pintura de perro bruno'
+            ></Image>
+            <p className='font-serif tracking-widest text-center uppercase'>Bruno</p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
