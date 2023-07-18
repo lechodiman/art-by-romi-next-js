@@ -15,27 +15,27 @@ import tomi from '@/public/images/tomi.jpg';
 
 export default function Portafolio() {
   const images = [
+    { src: tomi, alt: 'Image 12' },
     { src: bruno, alt: 'Image 1' },
     { src: copito, alt: 'Image 2' },
-    { src: domi, alt: 'Image 3' },
+    { src: ruffo, alt: 'Image 10' },
     { src: lana, alt: 'Image 4' },
     { src: locky, alt: 'Image 5' },
     { src: luna, alt: 'Image 6' },
     { src: lunita, alt: 'Image 7' },
     { src: pajarraco, alt: 'Image 8' },
+    { src: domi, alt: 'Image 3' },
     { src: pia, alt: 'Image 9' },
-    { src: ruffo, alt: 'Image 10' },
     { src: thor, alt: 'Image 11' },
-    { src: tomi, alt: 'Image 12' },
   ];
 
   return (
     <div className='bg-gray-200'>
       <section className='container px-5 mx-auto space-y-8 text-center py-14'>
         <TypographyH1>Portafolio</TypographyH1>
-        <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3'>
+        <div className='gap-4 columns-1 sm:columns-2 md:columns-3 lg:columns-4'>
           {images.map((image) => (
-            <div key={image.alt} className='relative'>
+            <div key={image.alt} className='mb-6'>
               <Image
                 src={image.src}
                 alt={image.alt}
