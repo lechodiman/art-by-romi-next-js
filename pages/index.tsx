@@ -1,19 +1,18 @@
 import { ArrowLongRightIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import Link from 'next/link';
-import bruno from '../public/images/bruno.jpg';
-import domi from '../public/images/domi.jpg';
-import tomi from '../public/images/tomi.jpg';
+import bruno from '@/public/images/bruno.jpg';
+import domi from '@/public/images/domi.jpg';
+import tomi from '@/public/images/tomi.jpg';
+import { TypographyH1 } from '@/components/TypographyH1';
 
 export default function Home() {
   return (
     <div>
-      <div className='min-h-screen bg-zinc-100'>
-        <div className='container px-5 py-10 mx-auto'>
+      <div className='bg-zinc-100'>
+        <div className='container px-5 py-20 mx-auto'>
           <div className='flex flex-col items-center space-y-5 text-center'>
-            <h2 className='font-serif text-5xl tracking-wide uppercase text-neutral-700'>
-              Pintando Mascotas
-            </h2>
+            <TypographyH1>Pintando Mascotas</TypographyH1>
 
             <p className='tracking-widest uppercase'>Retratos de mascotas en acrílico</p>
 
@@ -33,8 +32,8 @@ export default function Home() {
       </div>
 
       <section className='py-14'>
-        <div className='container px-5 mx-auto'>
-          <div className='flex flex-col items-center space-y-5 text-center'>
+        <div className='container max-w-4xl px-5 mx-auto'>
+          <div className='flex flex-col items-center space-y-10 text-center'>
             <h2 className='font-serif text-4xl tracking-wide uppercase text-neutral-700'>
               Acerca de mi
             </h2>
@@ -65,7 +64,7 @@ export default function Home() {
       </section>
 
       <section className='py-14 bg-zinc-100'>
-        <div className='container px-5 mx-auto'>
+        <div className='container max-w-4xl px-5 mx-auto'>
           <div className='space-y-10 text-center'>
             <h2 className='font-serif text-4xl tracking-wide uppercase text-neutral-700'>
               Testimonios
@@ -127,13 +126,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      <footer className='container px-5 py-8 mx-auto text-center'>
-        <p className='text-sm'>
-          © 2023 Pintando Mascotas | Hecho con{' '}
-          <span className='text-red-500'>&#10084;&#65039;</span> por Luis Chodiman{' '}
-        </p>
-      </footer>
     </div>
   );
 }

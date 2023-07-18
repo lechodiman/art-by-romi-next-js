@@ -1,11 +1,10 @@
 import { TypographyH1 } from '@/components/TypographyH1';
 
-export default function Encargos() {
+export default function Portafolio() {
   return (
     <div className='bg-gray-200'>
       <section className='container mx-auto space-y-5 text-center py-14'>
-        <TypographyH1>Guía de encargos</TypographyH1>
-        <h3 className='tracking-widest uppercase'>paso a paso</h3>
+        <TypographyH1>Contacto</TypographyH1>
       </section>
     </div>
   );

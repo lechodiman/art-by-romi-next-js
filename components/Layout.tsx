@@ -6,10 +6,9 @@ import { Fragment } from 'react';
 const navigation = {
   pages: [
     { name: 'Inicio', href: '/' },
-    { name: 'Testimonios', href: '/testimonios' },
     { name: 'Galería', href: '/portafolio' },
     { name: '¿Cómo hago un encargo?', href: '/encargos' },
-    { name: 'Contáctame', href: '/contáctame' },
+    { name: 'Contáctame', href: '/contacto' },
   ],
 };
 
@@ -49,6 +48,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </div>
 
       {children}
+
+      <footer className='container px-5 py-8 mx-auto text-center'>
+        <p className='text-sm'>
+          © 2023 Pintando Mascotas | Hecho con{' '}
+          <span className='text-red-500'>&#10084;&#65039;</span> por Luis Chodiman{' '}
+        </p>
+      </footer>
     </div>
   );
 }
