@@ -4,11 +4,7 @@ import bruno from '@/public/images/bruno.jpg';
 import copito from '@/public/images/copito.jpg';
 import domi from '@/public/images/domi.jpg';
 import lana from '@/public/images/lana.jpg';
-import locky from '@/public/images/locky.jpg';
-import luna from '@/public/images/luna.jpg';
-import lunita from '@/public/images/lunita.jpg';
 import pajarraco from '@/public/images/pajarraco.jpg';
-import pia from '@/public/images/pia.jpg';
 import ruffo from '@/public/images/ruffo.jpg';
 import thor from '@/public/images/thor.jpg';
 import tomi from '@/public/images/tomi.jpg';
@@ -20,12 +16,8 @@ export default function Portafolio() {
     { src: copito, alt: 'Image 2' },
     { src: ruffo, alt: 'Image 10' },
     { src: lana, alt: 'Image 4' },
-    { src: locky, alt: 'Image 5' },
-    { src: luna, alt: 'Image 6' },
-    { src: lunita, alt: 'Image 7' },
     { src: pajarraco, alt: 'Image 8' },
     { src: domi, alt: 'Image 3' },
-    { src: pia, alt: 'Image 9' },
     { src: thor, alt: 'Image 11' },
   ];
 
