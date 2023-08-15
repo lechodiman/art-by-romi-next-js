@@ -24,7 +24,7 @@ export default function Home() {
               priority
             ></Image>
 
-            <Link href='#' className='inline-block tracking-widest uppercase'>
+            <Link href='/contacto' className='inline-block tracking-widest uppercase'>
               QUIERO ENCARGAR UN RETRATO{' '}
               <ArrowLongRightIcon className='inline-block w-5 h-5' />
             </Link>
@@ -117,7 +117,7 @@ export default function Home() {
               </div>
             </div>
 
-            <Link href='#' className='inline-block tracking-widest uppercase'>
+            <Link href='/contacto' className='inline-block tracking-widest uppercase'>
               Ponte en contacto <ArrowLongRightIcon className='inline-block w-5 h-5' />
             </Link>
           </div>
