@@ -43,6 +43,7 @@ export default function Portafolio() {
               <Image
                 src={image.src}
                 alt={image.alt}
+                width={500}
                 className='object-cover object-center transition duration-500 ease-in-out transform rounded-lg shadow-lg hover:-translate-y-1 hover:scale-105'
               />
             </div>

@@ -25,7 +25,8 @@ export default function Home() {
             ></Image>
 
             <Link href='#' className='inline-block tracking-widest uppercase'>
-              Ver lista de precios <ArrowLongRightIcon className='inline-block w-5 h-5' />
+              QUIERO ENCARGAR UN RETRATO{' '}
+              <ArrowLongRightIcon className='inline-block w-5 h-5' />
             </Link>
           </div>
         </div>
@@ -38,25 +39,27 @@ export default function Home() {
               Acerca de mi
             </h2>
             <p className='text-base'>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. At, temporibus
-              repudiandae perferendis et explicabo, necessitatibus officiis odit esse vero
-              eos excepturi quam incidunt rerum eum accusantium voluptatem quae laudantium
-              hic!
+              Hola, soy Romina Rivera de Santiago de Chile. Bienvenido a
+              &ldquo;artbyromi&rdquo;, hago retratos personalisados de perros, gatos,
+              animales salvajes y de granja. Toda mi vida he sentido un gran amor por los
+              animales, un día me dió por pintar a mi perrita, como me gustó el resultado
+              continué con mi perrito y de a poco me fueron llegando encargos de mascotas,
+              desde entonces no he parado.
             </p>
             <p className='text-base'>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. At, temporibus
-              repudiandae perferendis et explicabo, necessitatibus officiis odit esse vero
-              eos excepturi quam incidunt rerum eum accusantium voluptatem quae laudantium
-              hic!
+              De esta mandera, intento traspasar mi pasión por los animales a retratos de
+              pinturas de acrílico y me esfuerzo para capturar la semejanza del animal.
+              Estas pinturas son una buena forma de decorar tu hogar, plasmar a los
+              regalones de la casa, darle vida a un animal que ya partió y sobretodo un
+              perfecto regalo para un ser querido.{' '}
             </p>
             <p className='text-base'>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. At, temporibus
-              repudiandae perferendis et explicabo, necessitatibus officiis odit esse vero
-              eos excepturi quam incidunt rerum eum accusantium voluptatem quae laudantium
-              hic!
+              Te invito a ponerte en contacto conmigo para reservar el retrato de tu
+              mascota, estoy atenta a cualquier pregunta o sugerencia. ¡Gracias por tu
+              visita!
             </p>
 
-            <Link href='#' className='inline-block tracking-widest uppercase'>
+            <Link href='/portafolio' className='inline-block tracking-widest uppercase'>
               Ver Portafolio <ArrowLongRightIcon className='inline-block w-5 h-5' />
             </Link>
           </div>
@@ -70,8 +73,8 @@ export default function Home() {
               Testimonios
             </h2>
 
-            <div className='space-y-8'>
-              <div className='flex flex-col items-center space-y-4'>
+            <div className='space-y-20'>
+              <div className='flex flex-col items-center gap-4 md:gap-8 md:flex-row-reverse'>
                 <p className='text-base'>
                   &quot;Las obras que retratan a mis perritos lograron que sintiera que
                   volvieran a mi lado despues de que ya hubieran partido, se nota el
@@ -80,31 +83,37 @@ export default function Home() {
                   los mas prolijos detalles para entregar un trabajo no solo mas que
                   competente, sino tambien el amor con que hace estos cuadros&quot;
                 </p>
-                <Image
-                  className='object-cover w-24 h-24 rounded-full'
-                  src={bruno}
-                  width={96}
-                  height={96}
-                  alt='Pintura de perro bruno'
-                ></Image>
-                <p className='font-serif tracking-widest text-center uppercase'>Bruno</p>
+                <div className='flex-shrink-0 space-y-2'>
+                  <Image
+                    src={bruno}
+                    width={96}
+                    className='object-cover w-24 h-24 rounded-full'
+                    alt='Pintura de perro bruno'
+                  ></Image>
+                  <p className='font-serif tracking-widest text-center uppercase'>
+                    Bruno
+                  </p>
+                </div>
               </div>
 
-              <div className='flex flex-col items-center space-y-4'>
+              <div className='flex flex-col items-center gap-4 md:gap-8 md:flex-row-reverse'>
                 <p className='text-base'>
                   &quot;Cuando recibí la pintura me impresionó lo real de ella, ya que
                   capturó detalles únicos de mi perrito, incluso su mirada y el brillo en
                   sus ojos, lo que me hizo notar la dedicación y cariño que hubo en el
                   proceso para retratar&quot;
                 </p>
-                <Image
-                  className='object-cover w-24 h-24 rounded-full'
-                  src={domi}
-                  width={96}
-                  height={96}
-                  alt='Pintura de Domi'
-                ></Image>
-                <p className='font-serif tracking-widest text-center uppercase'>Domi</p>
+                <div className='flex-shrink-0 space-y-2'>
+                  <Image
+                    className='object-cover w-24 h-24 rounded-full'
+                    src={domi}
+                    width={96}
+                    alt='Pintura de Domi'
+                  ></Image>
+                  <p className='font-serif tracking-widest text-center uppercase'>
+                    Aaron
+                  </p>
+                </div>
               </div>
             </div>
 

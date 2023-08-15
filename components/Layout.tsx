@@ -14,11 +14,25 @@ const navigation = {
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className='bg-white text-zinc-500'>
-      <div className='bg-zinc-100'>
-        <div className='container px-5 py-5 mx-auto'>
+    <main className='bg-white text-zinc-500'>
+      <header className='px-5 py-5 bg-zinc-100'>
+        <div className='container mx-auto'>
+          <div className='hidden md:flex md:items-center md:justify-between'>
+            <div className='inline-block'>LOGO</div>
+            <nav className='flex space-x-6'>
+              {navigation.pages.map((page) => (
+                <Link
+                  className='text-zinc-500 hover:text-zinc-700'
+                  key={page.name}
+                  href={page.href}
+                >
+                  {page.name}
+                </Link>
+              ))}
+            </nav>
+          </div>
           <Menu>
-            <header className=''>
+            <header className='md:hidden'>
               <div className='flex items-center justify-between'>
                 <div className='inline-block'>LOGO</div>
                 <Menu.Button>
@@ -32,12 +46,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 enterTo='translate-y-0 opacity-100'
                 leave='transition ease-in duration-150'
                 leaveFrom='translate-y-0 opacity-100'
-                leaveTo='-translate-y-6 opacity-0'
+                leaveTo='-trandivte-y-6 opacity-0'
               >
                 <Menu.Items className='flex flex-col mt-4 space-y-3'>
                   {navigation.pages.map((page) => (
                     <Menu.Item key={page.name}>
-                      <Link href={page.href}>{page.name}</Link>
+                      <Link
+                        className='text-zinc-500 hover:text-zinc-700'
+                        href={page.href}
+                      >
+                        {page.name}
+                      </Link>
                     </Menu.Item>
                   ))}
                 </Menu.Items>
@@ -45,7 +64,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </header>
           </Menu>
         </div>
-      </div>
+      </header>
 
       {children}
 
@@ -55,6 +74,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <span className='text-red-500'>&#10084;&#65039;</span> por Luis Chodiman{' '}
         </p>
       </footer>
-    </div>
+    </main>
   );
 }
