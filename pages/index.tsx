@@ -38,7 +38,7 @@ export default function Home() {
             <h2 className='font-serif text-4xl tracking-wide uppercase text-neutral-700'>
               Acerca de mi
             </h2>
-            <p className='text-base'>
+            <p className='text-base leading-relaxed'>
               Hola, soy Romina Rivera de Santiago de Chile. Bienvenido a
               &ldquo;artbyromi&rdquo;, hago retratos personalisados de perros, gatos,
               animales salvajes y de granja. Toda mi vida he sentido un gran amor por los
@@ -46,14 +46,14 @@ export default function Home() {
               continué con mi perrito y de a poco me fueron llegando encargos de mascotas,
               desde entonces no he parado.
             </p>
-            <p className='text-base'>
+            <p className='text-base leading-relaxed'>
               De esta mandera, intento traspasar mi pasión por los animales a retratos de
               pinturas de acrílico y me esfuerzo para capturar la semejanza del animal.
               Estas pinturas son una buena forma de decorar tu hogar, plasmar a los
               regalones de la casa, darle vida a un animal que ya partió y sobretodo un
               perfecto regalo para un ser querido.{' '}
             </p>
-            <p className='text-base'>
+            <p className='text-base leading-relaxed'>
               Te invito a ponerte en contacto conmigo para reservar el retrato de tu
               mascota, estoy atenta a cualquier pregunta o sugerencia. ¡Gracias por tu
               visita!
@@ -75,7 +75,7 @@ export default function Home() {
 
             <div className='space-y-20'>
               <div className='flex flex-col items-center gap-4 md:gap-8 md:flex-row-reverse'>
-                <p className='text-base'>
+                <p className='text-base leading-relaxed'>
                   &quot;Las obras que retratan a mis perritos lograron que sintiera que
                   volvieran a mi lado despues de que ya hubieran partido, se nota el
                   talento y la pasion en querer inmortalizar a nuestras mascotas y al
@@ -97,7 +97,7 @@ export default function Home() {
               </div>
 
               <div className='flex flex-col items-center gap-4 md:gap-8 md:flex-row-reverse'>
-                <p className='text-base'>
+                <p className='text-base leading-relaxed'>
                   &quot;Cuando recibí la pintura me impresionó lo real de ella, ya que
                   capturó detalles únicos de mi perrito, incluso su mirada y el brillo en
                   sus ojos, lo que me hizo notar la dedicación y cariño que hubo en el
