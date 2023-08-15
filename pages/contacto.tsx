@@ -21,8 +21,21 @@ export default function Contacto() {
     setIsSubmitting(true);
 
     try {
-      // Send email using email and message
-      // ...
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, message }),
+      });
+
+      if (response.ok) {
+        setSubmitSuccess(true);
+        setEmail('');
+        setMessage('');
+      } else {
+        console.error(response.statusText);
+      }
 
       setSubmitSuccess(true);
       setEmail('');
