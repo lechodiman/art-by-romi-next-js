@@ -1,9 +1,10 @@
 import { groq } from 'next-sanity';
+import { Image } from 'sanity';
 
 const paintingFields = groq`
   _id,
   name,
-  "imageUrl": image.asset->url
+  image,
 `;
 
 export const allPaitingsQuery = groq`
@@ -15,5 +16,5 @@ export const allPaitingsQuery = groq`
 export interface Painting {
   _id: string;
   name: string;
-  imageUrl: string;
+  image: Image;
 }

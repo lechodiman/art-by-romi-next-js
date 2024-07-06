@@ -1,6 +1,7 @@
 import { TypographyH1 } from '@/components/TypographyH1';
 import { SharedPageProps } from '@/pages/_app';
 import { client, getPaintings } from '@/sanity/lib/client';
+import { urlForImage } from '@/sanity/lib/image';
 import { Painting } from '@/sanity/lib/queries';
 import { GetStaticProps } from 'next';
 import Image from 'next/image';
@@ -30,7 +31,7 @@ export default function Portafolio(props: PageProps) {
           {paintings.map((paiting) => (
             <div key={paiting._id} className='mb-6'>
               <Image
-                src={paiting.imageUrl}
+                src={urlForImage(paiting.image)}
                 alt={paiting.name}
                 width={500}
                 height={500}
