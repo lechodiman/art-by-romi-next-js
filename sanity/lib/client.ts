@@ -1,6 +1,7 @@
-import { createClient } from 'next-sanity'
+import { createClient, SanityClient } from 'next-sanity';
 
-import { apiVersion, dataset, projectId, useCdn } from '../env'
+import { apiVersion, dataset, projectId, useCdn } from '../env';
+import { allPaitingsQuery } from '@/sanity/lib/queries';
 
 export const client = createClient({
   projectId,
@@ -8,4 +9,8 @@ export const client = createClient({
   apiVersion,
   useCdn,
   perspective: 'published',
-})
+});
+
+export async function getPaintings(client: SanityClient) {
+  return (await client.fetch(allPaitingsQuery)) || [];
+}

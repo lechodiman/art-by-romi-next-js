@@ -69,10 +69,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       {children}
 
       <footer className='container px-5 py-8 mx-auto text-center'>
-        <p className='text-sm'>
-          © 2023 Pintando Mascotas | Hecho con{' '}
-          <span className='text-red-500'>&#10084;&#65039;</span> por Luis Chodiman{' '}
-        </p>
+        <p className='text-sm'>© 2024 Retratos Romi</p>
       </footer>
     </main>
   );

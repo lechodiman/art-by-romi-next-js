@@ -8,6 +8,8 @@ const playfair = Playfair_Display({
   subsets: ['latin'],
 });
 
+export interface SharedPageProps {}
+
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <main className={`${playfair.variable}`}>
