@@ -1,6 +1,6 @@
 import { defineField, defineType, type SchemaTypeDefinition } from 'sanity';
 
-const paintingType: SchemaTypeDefinition = defineType({
+const paintingType = defineType({
   name: 'painting',
   title: 'Painting',
   type: 'document',
