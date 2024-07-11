@@ -7,12 +7,12 @@ export const siteSettingsType = defineType({
   fields: [
     defineField({ name: 'title', title: 'Título', type: 'string' }),
     defineField({ name: 'subtitle', title: 'Subtítulo', type: 'string' }),
-    defineField({
+    {
       name: 'aboutMe',
       title: 'Acerca de mi',
       type: 'array',
       of: [{ type: 'block' }],
-    }),
+    },
     defineField({ name: 'heroImage', title: 'Imagen principal', type: 'image' }),
   ],
 });
