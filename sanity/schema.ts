@@ -1,15 +1,7 @@
-import { defineField, defineType, type SchemaTypeDefinition } from 'sanity';
-
-const paintingType = defineType({
-  name: 'painting',
-  title: 'Painting',
-  type: 'document',
-  fields: [
-    defineField({ name: 'name', type: 'string' }),
-    defineField({ name: 'image', type: 'image' }),
-  ],
-});
+import { paintingType } from '@/sanity/schemas/painting';
+import { siteSettingsType } from '@/sanity/schemas/siteSettings';
+import { type SchemaTypeDefinition } from 'sanity';
 
 export const schema: { types: SchemaTypeDefinition[] } = {
-  types: [paintingType],
+  types: [paintingType, siteSettingsType],
 };

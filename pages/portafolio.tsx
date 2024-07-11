@@ -27,7 +27,7 @@ export default function Portafolio(props: PageProps) {
   return (
     <div className='bg-gray-200'>
       <section className='container px-5 mx-auto space-y-8 text-center py-14'>
-        <TypographyH1>Portafolio</TypographyH1>
+        <TypographyH1>Galería</TypographyH1>
         <div className='gap-4 columns-1 sm:columns-2 md:columns-3 lg:columns-4'>
           {paintings.map((paiting) => (
             <div key={paiting._id} className='mb-6'>
