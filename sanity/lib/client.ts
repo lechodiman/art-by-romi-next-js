@@ -14,3 +14,7 @@ export const client = createClient({
 export async function getPaintings(client: SanityClient) {
   return (await client.fetch(allPaitingsQuery)) || [];
 }
+
+export async function getSiteSettings(client: SanityClient) {
+  return await client.fetch(`*[_type == 'siteSettings'][0]`);
+}

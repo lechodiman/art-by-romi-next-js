@@ -17,7 +17,7 @@ export const getStaticProps: GetStaticProps<PageProps> = async (ctx) => {
     props: {
       paintings,
     },
-    revalidate: 60,
+    revalidate: 3600,
   };
 };
 

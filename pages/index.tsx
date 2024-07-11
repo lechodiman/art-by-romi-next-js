@@ -1,25 +1,47 @@
-import { ArrowLongRightIcon } from '@heroicons/react/24/outline';
-import Image from 'next/image';
-import Link from 'next/link';
+import { TypographyH1 } from '@/components/TypographyH1';
+import { SharedPageProps } from '@/pages/_app';
 import bruno from '@/public/images/bruno.jpg';
 import domi from '@/public/images/domi.jpg';
-import tomi from '@/public/images/tomi.jpg';
-import { TypographyH1 } from '@/components/TypographyH1';
+import { client, getSiteSettings } from '@/sanity/lib/client';
+import { urlForImage } from '@/sanity/lib/image';
+import { SiteSettings } from '@/sanity/lib/queries';
+import { ArrowLongRightIcon } from '@heroicons/react/24/outline';
+import { GetStaticProps } from 'next';
+import Image from 'next/image';
+import Link from 'next/link';
 
-export default function Home() {
+interface PageProps extends SharedPageProps {
+  siteSettings: SiteSettings;
+}
+
+export const getStaticProps: GetStaticProps<PageProps> = async (ctx) => {
+  const siteSettings = await getSiteSettings(client);
+
+  return {
+    props: {
+      siteSettings,
+    },
+    revalidate: 3600,
+  };
+};
+
+export default function Home(props: PageProps) {
+  const { siteSettings } = props;
+
   return (
     <div>
       <div className='bg-zinc-100'>
         <div className='container px-5 py-20 mx-auto'>
           <div className='flex flex-col items-center space-y-5 text-center'>
-            <TypographyH1>Pintando Mascotas</TypographyH1>
+            <TypographyH1>{siteSettings.title}</TypographyH1>
 
-            <p className='tracking-widest uppercase'>Retratos de mascotas en acrílico</p>
+            <p className='tracking-widest uppercase'>{siteSettings.subtitle}</p>
 
             <Image
               className='object-contain w-80'
-              src={tomi}
+              src={urlForImage(siteSettings.heroImage)}
               width={320}
+              height={500}
               alt='Retrato de gato'
               priority
             ></Image>
@@ -38,26 +60,14 @@ export default function Home() {
             <h2 className='font-serif text-4xl tracking-wide uppercase text-neutral-700'>
               Acerca de mi
             </h2>
-            <p className='text-base leading-relaxed'>
-              Hola, soy Romina Rivera de Santiago de Chile. Bienvenido a
-              &ldquo;artbyromi&rdquo;, hago retratos personalisados de perros, gatos,
-              animales salvajes y de granja. Toda mi vida he sentido un gran amor por los
-              animales, un día me dió por pintar a mi perrita, como me gustó el resultado
-              continué con mi perrito y de a poco me fueron llegando encargos de mascotas,
-              desde entonces no he parado.
-            </p>
-            <p className='text-base leading-relaxed'>
-              De esta mandera, intento traspasar mi pasión por los animales a retratos de
-              pinturas de acrílico y me esfuerzo para capturar la semejanza del animal.
-              Estas pinturas son una buena forma de decorar tu hogar, plasmar a los
-              regalones de la casa, darle vida a un animal que ya partió y sobretodo un
-              perfecto regalo para un ser querido.{' '}
-            </p>
-            <p className='text-base leading-relaxed'>
-              Te invito a ponerte en contacto conmigo para reservar el retrato de tu
-              mascota, estoy atenta a cualquier pregunta o sugerencia. ¡Gracias por tu
-              visita!
-            </p>
+
+            {siteSettings.aboutMe.map((block, index) => (
+              <p key={index} className='text-base leading-relaxed'>
+                {block.children.map((child, index) => (
+                  <span key={index}>{child.text}</span>
+                ))}
+              </p>
+            ))}
 
             <Link href='/portafolio' className='inline-block tracking-widest uppercase'>
               Ver Portafolio <ArrowLongRightIcon className='inline-block w-5 h-5' />
