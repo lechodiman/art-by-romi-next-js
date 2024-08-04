@@ -10,6 +10,7 @@ const nextConfig = {
       },
     ],
   },
+  transpilePackages: ['@mercadopago/sdk-react'],
 };
 
 module.exports = nextConfig;
