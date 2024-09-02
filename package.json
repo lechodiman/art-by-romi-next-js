@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "mercadopago": "tsx --env-file=.env.local ./preferences.ts"
+    "mercadopago": "dotenv -e .env.local -- tsx ./preferences.ts"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.13",
@@ -22,6 +22,7 @@
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.11",
     "autoprefixer": "10.4.14",
+    "dotenv": "^16.4.5",
     "eslint": "8.36.0",
     "eslint-config-next": "13.2.4",
     "mercadopago": "^2.0.11",
@@ -39,6 +40,7 @@
   },
   "devDependencies": {
     "@types/nodemailer": "^6.4.9",
+    "dotenv-cli": "^7.4.2",
     "tsx": "^4.16.5"
   }
 }

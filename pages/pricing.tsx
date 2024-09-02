@@ -44,7 +44,7 @@ export default function Pricing() {
         <div className='max-w-md mx-auto'>
           <Wallet
             initialization={{
-              preferenceId: '301896957-47b527db-862c-4a4a-8683-9941d5c81dc3',
+              preferenceId: '301896957-5fbdba6b-27ce-4a27-b33c-b282b6c8436c',
             }}
           />
         </div>

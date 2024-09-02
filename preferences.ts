@@ -6,31 +6,27 @@ const client = new MercadoPagoConfig({
 
 const preference = new Preference(client);
 
-// preference
-//   .create({
-//     body: {
-//       items: [
-//         {
-//           id: '2',
-//           title: 'Retrato mediano',
-//           unit_price: 40_000,
-//           quantity: 1,
-//         },
-//       ],
-//       back_urls: {
-//         success: 'https://retratosromi.com/api/feedback',
-//         failure: 'https://retratosromi.com/api/feedback',
-//         pending: 'https://retratosromi.com/api/feedback',
-//       },
-//       auto_return: 'approved',
-//     },
-//   })
-//   .then(console.log)
-//   .catch(console.error);
-
 preference
-  .search({})
-  .then((response) => {
-    console.log(JSON.stringify(response, null, 2));
+  .create({
+    body: {
+      items: [
+        {
+          id: 'test_product_1',
+          title: 'Test Product',
+          unit_price: 1000,
+          quantity: 1,
+        },
+      ],
+      back_urls: {
+        success:
+          'https://retratosromi-git-feature-mercado-pago-luis-chodimans-projects.vercel.app/api/feedback',
+        failure:
+          'https://retratosromi-git-feature-mercado-pago-luis-chodimans-projects.vercel.app/api/feedback',
+        pending:
+          'https://retratosromi-git-feature-mercado-pago-luis-chodimans-projects.vercel.app/api/feedback',
+      },
+      auto_return: 'approved',
+    },
   })
+  .then(console.log)
   .catch(console.error);
