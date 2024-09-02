@@ -42,9 +42,15 @@ export default function Pricing() {
         </div>
 
         <div className='max-w-md mx-auto'>
-          <Wallet
+          {/* <Wallet
             initialization={{
               preferenceId: '301896957-5fbdba6b-27ce-4a27-b33c-b282b6c8436c',
+            }}
+          /> */}
+
+          <Wallet
+            initialization={{
+              preferenceId: '1931267094-5c6abc91-bd78-40a7-96c3-4ded683a6979',
             }}
           />
         </div>
