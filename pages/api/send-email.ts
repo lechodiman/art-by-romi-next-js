@@ -36,9 +36,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       await transporter.sendMail({
         from: `Pinturas Romi <lechodiman@uc.cl>`,
-        to: 'lechodiman@uc.cl',
-        subject: 'Nuevo mensaje de la página de pinturitas',
-        text: `Email: ${email}\n\nMessage: ${message}`,
+        to: process.env.RECIPIENT_EMAIL,
+        subject: 'Nuevo mensaje de la página de Retratos Romi',
+        text: `Email: ${email}\n\nMensaje: ${message}`,
       });
 
       res.status(200).json({ message: 'Email sent successfully' });
