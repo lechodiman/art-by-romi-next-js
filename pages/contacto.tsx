@@ -1,10 +1,14 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 export default function Contacto() {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [emailError, setEmailError] = useState(false);
   const [messageError, setMessageError] = useState(false);
+  const [captchaValue, setCaptchaValue] = useState<string | null>(null);
+  const [captchaError, setCaptchaError] = useState(false);
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
@@ -12,9 +16,10 @@ export default function Contacto() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!email || !message) {
+    if (!email || !message || !captchaValue) {
       setEmailError(!email);
       setMessageError(!message);
+      setCaptchaError(!captchaValue);
       return;
     }
 
@@ -26,20 +31,18 @@ export default function Contacto() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, message }),
+        body: JSON.stringify({ email, message, captchaValue }),
       });
 
       if (response.ok) {
         setSubmitSuccess(true);
         setEmail('');
         setMessage('');
+        setCaptchaValue(null);
+        recaptchaRef.current?.reset();
       } else {
         console.error(response.statusText);
       }
-
-      setSubmitSuccess(true);
-      setEmail('');
-      setMessage('');
     } catch (error) {
       console.error(error);
     }
@@ -50,20 +53,18 @@ export default function Contacto() {
   return (
     <div>
       <section className='pt-40 pb-20 bg-gray-200'>
-        <div className='container mx-auto space-y-20 text-center'>
-          <h1 className='font-serif text-4xl tracking-widest uppercase sm:text-6xl text-neutral-700 lg:text-7xl'>
+        <div className='container mx-auto space-y-16 text-center'>
+          <h1 className='max-w-5xl mx-auto font-serif text-4xl tracking-widest uppercase sm:text-6xl text-neutral-700 lg:text-7xl'>
             Me encantaría hablar contigo
           </h1>
 
-          <div className='max-w-md mx-auto space-y-4'>
-            <p className='leading-relaxed'>
+          <div className='max-w-xl mx-auto space-y-4'>
+            <p className='text-lg leading-relaxed'>
               Puedes dejar registrado tu interes en comisionar un retrato usando el
               formulario de contacto abajo o enviándome un email directamente. Yo me
               pondré en contacto contigo para discutir tu retrato en más detalle y los
               tiempos de espera actuales.
             </p>
-
-            <p> 📔 EMAIL: rdrivera@uc.cl</p>
           </div>
         </div>
       </section>
@@ -103,6 +104,20 @@ export default function Contacto() {
               />
               {messageError && (
                 <p className='text-red-500'>Por favor ingresa un mensaje</p>
+              )}
+            </div>
+
+            <div>
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY as string}
+                onChange={(value) => {
+                  setCaptchaValue(value);
+                  setCaptchaError(false);
+                }}
+              />
+              {captchaError && (
+                <p className='text-red-500'>Por favor completa el captcha</p>
               )}
             </div>
 
