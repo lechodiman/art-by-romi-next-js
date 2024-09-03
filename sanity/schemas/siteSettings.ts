@@ -14,7 +14,7 @@ export const siteSettingsType = defineType({
       of: [{ type: 'block' }],
     },
     defineField({ name: 'heroImage', title: 'Imagen principal', type: 'image' }),
-    defineField({
+    {
       name: 'faqItems',
       title: 'Preguntas Frecuentes',
       type: 'array',
@@ -27,6 +27,6 @@ export const siteSettingsType = defineType({
           ],
         },
       ],
-    }),
+    },
   ],
 });
