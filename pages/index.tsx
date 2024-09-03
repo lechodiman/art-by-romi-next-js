@@ -9,6 +9,7 @@ import { Disclosure, Transition } from '@headlessui/react';
 import { GetStaticProps } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
+import { CustomLink } from '@/components/CustomLink';
 
 interface PageProps extends SharedPageProps {
   siteSettings: SiteSettings;
@@ -50,10 +51,9 @@ export default function Home(props: PageProps) {
                 priority
               ></Image>
 
-              <Link href='/contacto' className='inline-block tracking-widest uppercase'>
+              <CustomLink href='/contacto' variant='primary' popup>
                 QUIERO ENCARGAR UN RETRATO{' '}
-                <ArrowLongRightIcon className='inline-block w-5 h-5' />
-              </Link>
+              </CustomLink>
             </div>
           </div>
         </div>
@@ -89,9 +89,9 @@ export default function Home(props: PageProps) {
               ))}
             </div>
 
-            <Link href='/contacto' className='inline-block tracking-widest uppercase'>
+            <CustomLink href='/contacto'>
               Ponte en contacto <ArrowLongRightIcon className='inline-block w-5 h-5' />
-            </Link>
+            </CustomLink>
           </div>
         </div>
       </section>
@@ -163,10 +163,10 @@ export default function Home(props: PageProps) {
             ))}
           </div>
           <div className='mt-10 text-center'>
-            <Link href='/portafolio' className='inline-block tracking-widest uppercase'>
+            <CustomLink href='/portafolio'>
               Ver todo el portafolio{' '}
               <ArrowLongRightIcon className='inline-block w-5 h-5' />
-            </Link>
+            </CustomLink>
           </div>
         </div>
       </section>
@@ -209,10 +209,10 @@ export default function Home(props: PageProps) {
               ))}
             </div>
 
-            <Link href='/contacto' className='inline-block tracking-widest uppercase'>
+            <CustomLink href='/contacto'>
               ¿Tienes más preguntas? Contáctame{' '}
               <ArrowLongRightIcon className='inline-block w-5 h-5' />
-            </Link>
+            </CustomLink>
           </div>
         </div>
       </section>
@@ -231,9 +231,9 @@ export default function Home(props: PageProps) {
               </p>
             ))}
 
-            <Link href='/portafolio' className='inline-block tracking-widest uppercase'>
+            <CustomLink href='/portafolio'>
               Ver Portafolio <ArrowLongRightIcon className='inline-block w-5 h-5' />
-            </Link>
+            </CustomLink>
           </div>
         </div>
       </section>
