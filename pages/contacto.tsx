@@ -51,7 +51,7 @@ export default function Contacto() {
   };
 
   return (
-    <div>
+    <div className="px-5">
       <section className='pt-40 pb-20 bg-gray-200'>
         <div className='container mx-auto space-y-16 text-center'>
           <h1 className='max-w-5xl mx-auto font-serif text-4xl tracking-widest uppercase sm:text-6xl text-neutral-700 lg:text-7xl'>
