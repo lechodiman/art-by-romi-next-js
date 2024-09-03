@@ -1,7 +1,7 @@
 import { createClient, SanityClient } from 'next-sanity';
 
 import { apiVersion, dataset, projectId, useCdn } from '../env';
-import { allPaitingsQuery } from '@/sanity/lib/queries';
+import { allPaitingsQuery, siteSettingsQuery } from '@/sanity/lib/queries';
 
 export const client = createClient({
   projectId,
@@ -16,5 +16,5 @@ export async function getPaintings(client: SanityClient) {
 }
 
 export async function getSiteSettings(client: SanityClient) {
-  return await client.fetch(`*[_type == 'siteSettings'][0]`);
+  return await client.fetch(siteSettingsQuery);
 }
