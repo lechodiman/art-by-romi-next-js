@@ -24,4 +24,16 @@ export interface SiteSettings {
   subtitle: string;
   aboutMe: PortableTextBlock[];
   heroImage: Image;
+  faqItems: Array<{ question: string; answer: string }>;
 }
+
+export const siteSettingsQuery = groq`*[_type == "siteSettings"][0]{
+  title,
+  subtitle,
+  aboutMe,
+  heroImage,
+  faqItems[] {
+    question,
+    answer
+  }
+}`;
