@@ -7,7 +7,6 @@ const navigation = {
   pages: [
     { name: 'Inicio', href: '/' },
     { name: 'Galería', href: '/portafolio' },
-    { name: '¿Cómo hago un encargo?', href: '/encargos' },
     { name: 'Contáctame', href: '/contacto' },
   ],
 };
