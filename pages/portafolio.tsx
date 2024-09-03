@@ -25,8 +25,8 @@ export default function Portafolio(props: PageProps) {
   const { paintings } = props;
 
   return (
-    <div className='bg-gray-100'>
-      <section className='container px-5 mx-auto space-y-8 py-14'>
+    <main className='flex-grow bg-gray-100'>
+      <section className='container flex-grow px-5 mx-auto space-y-8 py-14'>
         <TypographyH1 className='text-center'>Galería</TypographyH1>
         <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
           {paintings.map((painting) => (
@@ -44,6 +44,6 @@ export default function Portafolio(props: PageProps) {
           ))}
         </div>
       </section>
-    </div>
+    </main>
   );
 }

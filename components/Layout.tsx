@@ -13,7 +13,7 @@ const navigation = {
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <main className='bg-white text-zinc-500'>
+    <div className='flex flex-col min-h-screen bg-white text-zinc-500'>
       <header className='px-5 py-5 bg-zinc-100'>
         <div className='container mx-auto'>
           <div className='hidden md:flex md:items-center md:justify-between'>
@@ -70,6 +70,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <footer className='container px-5 py-8 mx-auto text-center'>
         <p className='text-sm'>© 2024 Retratos Romi</p>
       </footer>
-    </main>
+    </div>
   );
 }
