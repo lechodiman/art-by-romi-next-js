@@ -25,15 +25,26 @@ export interface SiteSettings {
   aboutMe: PortableTextBlock[];
   heroImage: Image;
   faqItems: Array<{ question: string; answer: string }>;
+  testimonials: Array<{
+    _id: string;
+    name: string;
+    image: any; // You might want to create a more specific type for Sanity images
+    text: string;
+  }>;
 }
 
-export const siteSettingsQuery = groq`*[_type == "siteSettings"][0]{
-  title,
-  subtitle,
-  aboutMe,
-  heroImage,
-  faqItems[] {
-    question,
-    answer
+export const siteSettingsQuery = groq`
+  *[_type == "siteSettings"][0] {
+    title,
+    subtitle,
+    aboutMe,
+    heroImage,
+    faqItems,
+    testimonials[] -> {
+      _id,
+      name,
+      image,
+      text
+    }
   }
-}`;
+`;

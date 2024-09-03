@@ -28,5 +28,12 @@ export const siteSettingsType = defineType({
         },
       ],
     },
+    defineField({
+      name: 'testimonials',
+      title: 'Testimonials',
+      type: 'array',
+      of: [{ type: 'reference', to: [{ type: 'testimonial' }] }],
+      validation: (Rule) => Rule.max(3),
+    }),
   ],
 });

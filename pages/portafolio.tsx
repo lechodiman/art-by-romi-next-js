@@ -25,19 +25,21 @@ export default function Portafolio(props: PageProps) {
   const { paintings } = props;
 
   return (
-    <div className='bg-gray-200'>
-      <section className='container px-5 mx-auto space-y-8 text-center py-14'>
-        <TypographyH1>Galería</TypographyH1>
-        <div className='gap-4 columns-1 sm:columns-2 md:columns-3 lg:columns-4'>
-          {paintings.map((paiting) => (
-            <div key={paiting._id} className='mb-6'>
-              <Image
-                src={urlForImage(paiting.image)}
-                alt={paiting.name}
-                width={500}
-                height={500}
-                className='object-cover object-center transition duration-500 ease-in-out transform rounded-lg shadow-lg hover:-translate-y-1 hover:scale-105'
-              />
+    <div className='bg-gray-100'>
+      <section className='container px-5 mx-auto space-y-8 py-14'>
+        <TypographyH1 className='text-center'>Galería</TypographyH1>
+        <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
+          {paintings.map((painting) => (
+            <div key={painting._id} className='flex flex-col items-center'>
+              <div className='relative w-full pt-[100%] overflow-hidden rounded-lg shadow-lg'>
+                <Image
+                  src={urlForImage(painting.image)}
+                  alt={painting.name}
+                  layout='fill'
+                  objectFit='cover'
+                />
+              </div>
+              <h3 className='mt-4 font-serif text-xl text-gray-800'>{painting.name}</h3>
             </div>
           ))}
         </div>
