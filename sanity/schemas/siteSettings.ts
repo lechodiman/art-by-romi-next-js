@@ -30,7 +30,7 @@ export const siteSettingsType = defineType({
     },
     {
       name: 'testimonials',
-      title: 'Testimonials',
+      title: 'Testimonios',
       type: 'array',
       of: [{ type: 'reference', to: [{ type: 'testimonial' }] }],
       validation: (Rule) => Rule.max(3),
