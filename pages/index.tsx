@@ -2,7 +2,7 @@ import { TypographyH1 } from '@/components/TypographyH1';
 import { SharedPageProps } from '@/pages/_app';
 import { client, getSiteSettings } from '@/sanity/lib/client';
 import { urlForImage } from '@/sanity/lib/image';
-import { SiteSettings } from '@/sanity/lib/queries';
+import { SiteSettings, Painting, featuredPaintingsQuery } from '@/sanity/lib/queries';
 import { ArrowLongRightIcon } from '@heroicons/react/24/outline';
 import { ChevronUpIcon } from '@heroicons/react/20/solid';
 import { Disclosure, Transition } from '@headlessui/react';
@@ -12,44 +12,49 @@ import Link from 'next/link';
 
 interface PageProps extends SharedPageProps {
   siteSettings: SiteSettings;
+  featuredPaintings: Painting[];
 }
 
 export const getStaticProps: GetStaticProps<PageProps> = async (ctx) => {
   const siteSettings = await getSiteSettings(client);
+  const featuredPaintings = await client.fetch(featuredPaintingsQuery);
 
   return {
     props: {
       siteSettings,
+      featuredPaintings,
     },
     revalidate: 3600,
   };
 };
 
 export default function Home(props: PageProps) {
-  const { siteSettings } = props;
+  const { siteSettings, featuredPaintings } = props;
 
   return (
     <div>
       <div className='bg-zinc-100'>
         <div className='container px-5 py-20 mx-auto'>
-          <div className='flex flex-col items-center space-y-5 text-center'>
+          <div className='flex flex-col items-center text-center'>
             <TypographyH1>{siteSettings.title}</TypographyH1>
 
-            <p className='tracking-widest uppercase'>{siteSettings.subtitle}</p>
+            <p className='mt-2 tracking-widest uppercase'>{siteSettings.subtitle}</p>
 
-            <Image
-              className='object-contain w-80'
-              src={urlForImage(siteSettings.heroImage)}
-              width={320}
-              height={500}
-              alt='Retrato de gato'
-              priority
-            ></Image>
+            <div className='mt-12 space-y-10'>
+              <Image
+                className='object-contain w-80'
+                src={urlForImage(siteSettings.heroImage)}
+                width={320}
+                height={500}
+                alt='Retrato de gato'
+                priority
+              ></Image>
 
-            <Link href='/contacto' className='inline-block tracking-widest uppercase'>
-              QUIERO ENCARGAR UN RETRATO{' '}
-              <ArrowLongRightIcon className='inline-block w-5 h-5' />
-            </Link>
+              <Link href='/contacto' className='inline-block tracking-widest uppercase'>
+                QUIERO ENCARGAR UN RETRATO{' '}
+                <ArrowLongRightIcon className='inline-block w-5 h-5' />
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -108,13 +113,9 @@ export default function Home(props: PageProps) {
                 />
               </div>
               <div className='space-y-4 md:w-1/2'>
-                <TypographyH1 className='text-xl'>
-                  Gran variedad de diseños para tu Mascota
-                </TypographyH1>
+                <TypographyH1 className='text-xl'>Personaliza tu retrato</TypographyH1>
                 <p className='text-neutral-600'>
-                  Descubre nuestras colecciones con una amplia gama de diseños
-                  personalizados para inmortalizar a tus amores peludos. Elige el estilo
-                  perfecto y crearemos recuerdos únicos de tus mascotas.
+                  Elige el tamaño del lienzo, el color y el estilo que más te guste.
                 </p>
               </div>
             </div>
@@ -133,9 +134,9 @@ export default function Home(props: PageProps) {
                   Arte personalizado y único
                 </TypographyH1>
                 <p className='text-neutral-600'>
-                  Somos artistas que creamos obras de arte exclusivas y personalizadas,
-                  capturando cada detalle único de tu mascota. Cada retrato es una pieza
-                  única, dibujada a mano con tableta digital con amor y dedicación.
+                  Voy a pintar tu retrato con amor y dedicación, capturando cada detalle
+                  único de tu mascota. Cada retrato es una obra de arte exclusiva y
+                  personalizada.
                 </p>
               </div>
             </div>
@@ -144,22 +145,27 @@ export default function Home(props: PageProps) {
       </section>
 
       <section className='bg-white py-14'>
-        <div className='container max-w-4xl px-5 mx-auto'>
-          <div className='flex flex-col items-center space-y-10 text-center'>
-            <h2 className='font-serif text-4xl tracking-wide uppercase text-neutral-700'>
-              Acerca de mi
-            </h2>
-
-            {siteSettings.aboutMe.map((block, index) => (
-              <p key={index} className='text-base leading-relaxed'>
-                {block.children.map((child, index) => (
-                  <span key={index}>{child.text}</span>
-                ))}
-              </p>
+        <div className='container max-w-6xl px-5 mx-auto'>
+          <h2 className='mb-10 font-serif text-4xl tracking-wide text-center uppercase text-neutral-700'>
+            Galería
+          </h2>
+          <div className='grid grid-cols-2 gap-8 md:grid-cols-4'>
+            {featuredPaintings.map((painting) => (
+              <div key={painting._id} className='aspect-square'>
+                <Image
+                  src={urlForImage(painting.image)}
+                  alt={painting.name}
+                  width={300}
+                  height={300}
+                  className='object-cover w-full h-full rounded-lg'
+                />
+              </div>
             ))}
-
+          </div>
+          <div className='mt-10 text-center'>
             <Link href='/portafolio' className='inline-block tracking-widest uppercase'>
-              Ver Portafolio <ArrowLongRightIcon className='inline-block w-5 h-5' />
+              Ver todo el portafolio{' '}
+              <ArrowLongRightIcon className='inline-block w-5 h-5' />
             </Link>
           </div>
         </div>
@@ -206,6 +212,27 @@ export default function Home(props: PageProps) {
             <Link href='/contacto' className='inline-block tracking-widest uppercase'>
               ¿Tienes más preguntas? Contáctame{' '}
               <ArrowLongRightIcon className='inline-block w-5 h-5' />
+            </Link>
+          </div>
+        </div>
+      </section>
+      <section className='bg-white py-14'>
+        <div className='container max-w-4xl px-5 mx-auto'>
+          <div className='flex flex-col items-center space-y-10 text-center'>
+            <h2 className='font-serif text-4xl tracking-wide uppercase text-neutral-700'>
+              Acerca de mi
+            </h2>
+
+            {siteSettings.aboutMe.map((block, index) => (
+              <p key={index} className='text-base leading-relaxed'>
+                {block.children.map((child, index) => (
+                  <span key={index}>{child.text}</span>
+                ))}
+              </p>
+            ))}
+
+            <Link href='/portafolio' className='inline-block tracking-widest uppercase'>
+              Ver Portafolio <ArrowLongRightIcon className='inline-block w-5 h-5' />
             </Link>
           </div>
         </div>

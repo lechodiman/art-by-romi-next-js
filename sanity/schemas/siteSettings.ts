@@ -35,5 +35,12 @@ export const siteSettingsType = defineType({
       of: [{ type: 'reference', to: [{ type: 'testimonial' }] }],
       validation: (Rule) => Rule.max(3),
     },
+    {
+      name: 'featuredPaintings',
+      title: 'Featured Paintings',
+      type: 'array',
+      of: [{ type: 'reference', to: [{ type: 'painting' }] }],
+      validation: (Rule) => Rule.max(4),
+    },
   ],
 });
