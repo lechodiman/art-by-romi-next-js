@@ -54,29 +54,7 @@ export default function Home(props: PageProps) {
         </div>
       </div>
 
-      <section className='py-14'>
-        <div className='container max-w-4xl px-5 mx-auto'>
-          <div className='flex flex-col items-center space-y-10 text-center'>
-            <h2 className='font-serif text-4xl tracking-wide uppercase text-neutral-700'>
-              Acerca de mi
-            </h2>
-
-            {siteSettings.aboutMe.map((block, index) => (
-              <p key={index} className='text-base leading-relaxed'>
-                {block.children.map((child, index) => (
-                  <span key={index}>{child.text}</span>
-                ))}
-              </p>
-            ))}
-
-            <Link href='/portafolio' className='inline-block tracking-widest uppercase'>
-              Ver Portafolio <ArrowLongRightIcon className='inline-block w-5 h-5' />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <section className='py-14 bg-zinc-100'>
+      <section className='bg-white py-14'>
         <div className='container max-w-6xl px-5 mx-auto'>
           <div className='space-y-10 text-center'>
             <h2 className='font-serif text-4xl tracking-wide uppercase text-neutral-700'>
@@ -113,7 +91,81 @@ export default function Home(props: PageProps) {
         </div>
       </section>
 
-      <section className='py-14'>
+      <section className='py-14 bg-zinc-100'>
+        <div className='container max-w-6xl px-5 mx-auto'>
+          <h2 className='mb-10 font-serif text-4xl tracking-wide text-center uppercase text-neutral-700'>
+            Lo que me diferencia
+          </h2>
+          <div className='space-y-12'>
+            <div className='flex flex-col items-center gap-8 md:flex-row'>
+              <div className='md:w-1/2'>
+                <Image
+                  src='/images/pet-portait.webp'
+                  width={400}
+                  height={300}
+                  alt='Retrato de mascota'
+                  className='w-full rounded-lg'
+                />
+              </div>
+              <div className='space-y-4 md:w-1/2'>
+                <TypographyH1 className='text-xl'>
+                  Gran variedad de diseños para tu Mascota
+                </TypographyH1>
+                <p className='text-neutral-600'>
+                  Descubre nuestras colecciones con una amplia gama de diseños
+                  personalizados para inmortalizar a tus amores peludos. Elige el estilo
+                  perfecto y crearemos recuerdos únicos de tus mascotas.
+                </p>
+              </div>
+            </div>
+            <div className='flex flex-col items-center gap-8 md:flex-row-reverse'>
+              <div className='md:w-1/2'>
+                <Image
+                  src='/images/artist-drawing.webp'
+                  width={400}
+                  height={300}
+                  alt='Artista dibujando'
+                  className='w-full rounded-lg'
+                />
+              </div>
+              <div className='space-y-4 md:w-1/2'>
+                <TypographyH1 className='text-xl'>
+                  Arte personalizado y único
+                </TypographyH1>
+                <p className='text-neutral-600'>
+                  Somos artistas que creamos obras de arte exclusivas y personalizadas,
+                  capturando cada detalle único de tu mascota. Cada retrato es una pieza
+                  única, dibujada a mano con tableta digital con amor y dedicación.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className='bg-white py-14'>
+        <div className='container max-w-4xl px-5 mx-auto'>
+          <div className='flex flex-col items-center space-y-10 text-center'>
+            <h2 className='font-serif text-4xl tracking-wide uppercase text-neutral-700'>
+              Acerca de mi
+            </h2>
+
+            {siteSettings.aboutMe.map((block, index) => (
+              <p key={index} className='text-base leading-relaxed'>
+                {block.children.map((child, index) => (
+                  <span key={index}>{child.text}</span>
+                ))}
+              </p>
+            ))}
+
+            <Link href='/portafolio' className='inline-block tracking-widest uppercase'>
+              Ver Portafolio <ArrowLongRightIcon className='inline-block w-5 h-5' />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className='py-14 bg-zinc-100'>
         <div className='container max-w-4xl px-5 mx-auto'>
           <div className='space-y-10 text-center'>
             <h2 className='font-serif text-4xl tracking-wide uppercase text-neutral-700'>
