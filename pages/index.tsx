@@ -177,7 +177,7 @@ export default function Home(props: PageProps) {
               ))}
             </div>
 
-            <CustomLink href='/contacto'>
+            <CustomLink variant='primary' href='/contacto'>
               Ponte en contacto <ArrowLongRightIcon className='inline-block w-5 h-5' />
             </CustomLink>
           </div>
