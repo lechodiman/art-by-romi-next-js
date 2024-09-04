@@ -10,7 +10,7 @@
     "mercadopago": "dotenv -e .env.local -- tsx ./preferences.ts"
   },
   "dependencies": {
-    "@headlessui/react": "^1.7.13",
+    "@headlessui/react": "^1.7.19",
     "@heroicons/react": "^2.0.16",
     "@mercadopago/sdk-react": "^0.0.19",
     "@sanity/client": "^6.20.1",
@@ -23,6 +23,7 @@
     "@types/react-dom": "18.0.11",
     "autoprefixer": "10.4.14",
     "dotenv": "^16.4.5",
+    "axios": "^1.7.7",
     "eslint": "8.36.0",
     "eslint-config-next": "13.2.4",
     "mercadopago": "^2.0.11",
@@ -32,6 +33,7 @@
     "postcss": "8.4.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-google-recaptcha": "^3.1.0",
     "sanity": "^3.49.0",
     "sharp": "^0.32.4",
     "styled-components": "^6.1.11",
@@ -41,6 +43,7 @@
   "devDependencies": {
     "@types/nodemailer": "^6.4.9",
     "dotenv-cli": "^7.4.2",
-    "tsx": "^4.16.5"
+    "tsx": "^4.16.5",
+    "@types/react-google-recaptcha": "^2.1.9"
   }
 }

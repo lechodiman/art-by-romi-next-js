@@ -4,7 +4,7 @@ import { Image } from 'sanity';
 const paintingFields = groq`
   _id,
   name,
-  image,
+  "image": image.asset->url
 `;
 
 export const allPaitingsQuery = groq`
@@ -13,15 +13,48 @@ export const allPaitingsQuery = groq`
   }
 `;
 
+export const featuredPaintingsQuery = groq`
+  *[_type == "siteSettings"][0].featuredPaintings[] -> {
+    ${paintingFields}
+  }
+`;
+
 export interface Painting {
   _id: string;
   name: string;
-  image: Image;
+  image: string;
 }
 
 export interface SiteSettings {
   title: string;
   subtitle: string;
   aboutMe: PortableTextBlock[];
-  heroImage: Image;
+  heroImage: string;
+  faqItems: Array<{ question: string; answer: string }>;
+  testimonials: Array<{
+    _id: string;
+    name: string;
+    image: any; // You might want to create a more specific type for Sanity images
+    text: string;
+  }>;
+  featuredPaintings: Painting[];
 }
+
+export const siteSettingsQuery = groq`
+  *[_type == "siteSettings"][0] {
+    title,
+    subtitle,
+    aboutMe,
+    heroImage,
+    faqItems,
+    testimonials[] -> {
+      _id,
+      name,
+      image,
+      text
+    },
+    featuredPaintings[] -> {
+      ${paintingFields}
+    }
+  }
+`;
