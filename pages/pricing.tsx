@@ -1,53 +1,80 @@
 import { TypographyH1 } from '@/components/TypographyH1';
 import { Wallet } from '@mercadopago/sdk-react';
+import Image from 'next/image';
 
 const PricingCard = ({
   title,
   description,
   price,
+  isPopular = false,
+  buttonText = 'Comprar',
 }: {
   title: string;
   description: string;
   price: string;
+  isPopular?: boolean;
+  buttonText?: string;
 }) => (
-  <div className='p-6 bg-white rounded-lg shadow-md'>
-    <h2 className='mb-4 text-2xl font-bold'>{title}</h2>
-    <p className='mb-4 text-gray-700'>{description}</p>
-    <p className='text-xl font-semibold'>{price}</p>
+  <div
+    className={`p-6 rounded-lg shadow-md ${isPopular ? 'bg-blue-600 text-white' : 'bg-white'}`}
+  >
+    <div className='relative w-full h-40 mb-4'>
+      <Image
+        src='/placeholder-image.jpg'
+        alt={`${title} canvas`}
+        layout='fill'
+        objectFit='cover'
+        className='rounded-md'
+      />
+    </div>
+    <h2 className='mb-2 text-2xl font-bold'>{title}</h2>
+    <p className='mb-4 text-sm'>{description}</p>
+    {isPopular && (
+      <span className='px-2 py-1 mb-4 text-xs font-semibold text-blue-600 bg-white rounded-full'>
+        Mejor Vendido
+      </span>
+    )}
+    <p className='mb-4 text-3xl font-semibold'>{price}</p>
+    <button
+      className={`w-full py-2 rounded-md ${isPopular ? 'bg-white text-blue-600' : 'bg-blue-600 text-white'}`}
+    >
+      {buttonText}
+    </button>
   </div>
 );
 
 export default function Pricing() {
   return (
-    <div className='bg-gray-200'>
+    <div className='flex-grow bg-gray-100'>
       <section className='container px-5 mx-auto space-y-8 text-center py-14'>
         <TypographyH1>Precios</TypographyH1>
 
-        <div className='grid grid-cols-1 gap-8 md:grid-cols-3'>
+        <div className='grid grid-cols-1 gap-8 md:grid-cols-4'>
           <PricingCard
-            title='Pequeño'
-            description='Ideal para retratos individuales.'
-            price='$50'
+            title='Lienzo 20x25'
+            description='Perfecto para espacios pequeños'
+            price='35.000 CLP'
           />
           <PricingCard
-            title='Familiar'
-            description='Perfecto para retratos familiares.'
-            price='$100'
+            title='Lienzo 25x30'
+            description='Nuestro tamaño más popular'
+            price='40.000 CLP'
+            isPopular={true}
           />
           <PricingCard
-            title='Adorable'
-            description='Para retratos adorables y únicos.'
-            price='$150'
+            title='Lienzo 30x40'
+            description='Para espacios grandes'
+            price='45.000 CLP'
+          />
+          <PricingCard
+            title='Lienzo Personalizado'
+            description='Crea tu propio diseño único'
+            price='Precio a consultar'
+            buttonText='Solicitar Personalizado'
           />
         </div>
 
         <div className='max-w-md mx-auto'>
-          {/* <Wallet
-            initialization={{
-              preferenceId: '301896957-5fbdba6b-27ce-4a27-b33c-b282b6c8436c',
-            }}
-          /> */}
-
           <Wallet
             initialization={{
               preferenceId: '1931267094-5c6abc91-bd78-40a7-96c3-4ded683a6979',
