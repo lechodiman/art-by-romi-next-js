@@ -1,15 +1,14 @@
+import { CustomLink } from '@/components/CustomLink';
 import { TypographyH1 } from '@/components/TypographyH1';
 import { SharedPageProps } from '@/pages/_app';
 import { client, getSiteSettings } from '@/sanity/lib/client';
 import { urlForImage } from '@/sanity/lib/image';
-import { SiteSettings, Painting, featuredPaintingsQuery } from '@/sanity/lib/queries';
-import { ArrowLongRightIcon } from '@heroicons/react/24/outline';
-import { ChevronUpIcon } from '@heroicons/react/20/solid';
+import { Painting, SiteSettings, featuredPaintingsQuery } from '@/sanity/lib/queries';
 import { Disclosure, Transition } from '@headlessui/react';
+import { ChevronUpIcon } from '@heroicons/react/20/solid';
+import { ArrowLongRightIcon } from '@heroicons/react/24/outline';
 import { GetStaticProps } from 'next';
 import Image from 'next/image';
-import Link from 'next/link';
-import { CustomLink } from '@/components/CustomLink';
 
 interface PageProps extends SharedPageProps {
   siteSettings: SiteSettings;
@@ -35,8 +34,16 @@ export default function Home(props: PageProps) {
   return (
     <div>
       <div className='bg-zinc-100'>
-        <div className='container px-5 py-20 mx-auto'>
+        <div className='container px-5 pb-20 mx-auto'>
           <div className='flex flex-col items-center text-center'>
+            <Image
+              src='/logo.svg'
+              width={150}
+              height={150}
+              alt='Logo'
+              className='mb-[-20px]'
+            />
+
             <TypographyH1>{siteSettings.title}</TypographyH1>
 
             <p className='mt-2 tracking-widest uppercase'>{siteSettings.subtitle}</p>

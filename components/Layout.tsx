@@ -1,6 +1,7 @@
 import { Menu, Transition } from '@headlessui/react';
 import { Bars3Icon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Fragment } from 'react';
 
 const navigation = {
@@ -17,7 +18,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <header className='px-5 py-5 bg-zinc-100'>
         <div className='container mx-auto'>
           <div className='hidden md:flex md:items-center md:justify-between'>
-            <div className='inline-block'>LOGO</div>
+            <Link href='/' className='inline-block'>
+              <Image src='/logo.svg' alt='Retratos Romi Logo' width={100} height={100} />
+            </Link>
             <nav className='flex space-x-6'>
               {navigation.pages.map((page) => (
                 <Link
@@ -33,7 +36,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <Menu>
             <header className='md:hidden'>
               <div className='flex items-center justify-between'>
-                <div className='inline-block'>LOGO</div>
+                <Link href='/' className='inline-block'>
+                  <Image
+                    src='/logo.svg'
+                    alt='Retratos Romi Logo'
+                    width={80}
+                    height={80}
+                  />
+                </Link>
                 <Menu.Button>
                   <Bars3Icon className='w-7 h-7' />
                 </Menu.Button>
