@@ -13,12 +13,12 @@ export const siteSettingsType = defineType({
       type: 'object',
       fields: [
         defineField({ name: 'image', title: 'Imagen', type: 'image' }),
-        defineField({
+        {
           name: 'text',
           title: 'Texto',
           type: 'array',
           of: [{ type: 'block' }],
-        }),
+        },
       ],
     },
     defineField({ name: 'heroImage', title: 'Imagen principal', type: 'image' }),
