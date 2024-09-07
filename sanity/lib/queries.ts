@@ -1,5 +1,4 @@
 import { groq, PortableTextBlock } from 'next-sanity';
-import { Image } from 'sanity';
 
 const paintingFields = groq`
   _id,
