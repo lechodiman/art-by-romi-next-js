@@ -28,7 +28,10 @@ export interface Painting {
 export interface SiteSettings {
   title: string;
   subtitle: string;
-  aboutMe: PortableTextBlock[];
+  aboutMe: {
+    image: string;
+    text: PortableTextBlock[];
+  };
   heroImage: string;
   faqItems: Array<{ question: string; answer: string }>;
   testimonials: Array<{
@@ -44,7 +47,10 @@ export const siteSettingsQuery = groq`
   *[_type == "siteSettings"][0] {
     title,
     subtitle,
-    aboutMe,
+    aboutMe {
+      "image": image.asset->url,
+      text
+    },
     heroImage,
     faqItems,
     testimonials[] -> {
