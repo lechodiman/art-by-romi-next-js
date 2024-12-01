@@ -50,5 +50,31 @@ export const siteSettingsType = defineType({
       of: [{ type: 'reference', to: [{ type: 'painting' }] }],
       validation: (Rule) => Rule.max(4),
     },
+    {
+      name: 'differentiators',
+      title: 'Diferenciadores',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            defineField({ name: 'title', title: 'Título', type: 'string' }),
+            defineField({ name: 'description', title: 'Descripción', type: 'text' }),
+            defineField({ name: 'image', title: 'Imagen', type: 'image' }),
+            defineField({
+              name: 'imagePosition',
+              title: 'Posición de imagen',
+              type: 'string',
+              options: {
+                list: [
+                  { title: 'Izquierda', value: 'left' },
+                  { title: 'Derecha', value: 'right' },
+                ],
+              },
+            }),
+          ],
+        },
+      ],
+    },
   ],
 });
