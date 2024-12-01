@@ -40,6 +40,12 @@ export interface SiteSettings {
     text: string;
   }>;
   featuredPaintings: Painting[];
+  differentiators: Array<{
+    title: string;
+    description: string;
+    image: string;
+    imagePosition: 'left' | 'right';
+  }>;
 }
 
 export const siteSettingsQuery = groq`
@@ -60,6 +66,12 @@ export const siteSettingsQuery = groq`
     },
     featuredPaintings[] -> {
       ${paintingFields}
+    },
+    differentiators[] {
+      title,
+      description,
+      "image": image.asset->url,
+      imagePosition
     }
   }
 `;
