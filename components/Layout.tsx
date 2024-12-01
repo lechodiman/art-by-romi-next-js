@@ -1,5 +1,6 @@
 import { Menu, Transition } from '@headlessui/react';
 import { Bars3Icon } from '@heroicons/react/24/outline';
+import { InstagramIcon, TiktokIcon } from './SocialIcons';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Fragment } from 'react';
@@ -77,8 +78,32 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
       {children}
 
-      <footer className='container px-5 py-8 mx-auto text-center'>
-        <p className='text-sm'>© 2024 Retratos Romi</p>
+      <footer className='mt-auto bg-zinc-100'>
+        <div className='container px-5 py-8 mx-auto'>
+          <div className='flex flex-col items-center justify-center space-y-4'>
+            <div className='flex space-x-6'>
+              <a
+                href='https://www.instagram.com/retratosromi/'
+                target='_blank'
+                rel='noopener noreferrer'
+                className='text-zinc-500 hover:text-zinc-700'
+              >
+                <span className='sr-only'>Instagram</span>
+                <InstagramIcon className='w-6 h-6' />
+              </a>
+              <a
+                href='https://www.tiktok.com/@retratosromi'
+                target='_blank'
+                rel='noopener noreferrer'
+                className='text-zinc-500 hover:text-zinc-700'
+              >
+                <span className='sr-only'>TikTok</span>
+                <TiktokIcon className='w-6 h-6' />
+              </a>
+            </div>
+            <p className='text-sm'>© 2024 Retratos Romi</p>
+          </div>
+        </div>
       </footer>
     </div>
   );
