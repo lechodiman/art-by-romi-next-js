@@ -101,7 +101,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <TiktokIcon className='w-6 h-6' />
               </a>
             </div>
-            <p className='text-sm'>© 2024 Retratos Romi</p>
+            <p className='text-sm'>© 2025 Retratos Romi</p>
           </div>
         </div>
       </footer>
