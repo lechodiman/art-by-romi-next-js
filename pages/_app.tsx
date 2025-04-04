@@ -21,6 +21,9 @@ export default function App({ Component, pageProps }: AppProps) {
           content='Retratos óleo personalizados de tus mascotas, con un estilo único y realista. Captura la esencia de tu amigo peludo en una obra de arte.'
         />
         <meta
+          name='keywords'
+          content='retratos de mascotas, arte personalizado, pintura al óleo, mascotas, arte, cuadro de mascotas, arte, mascotas, óleo, retrata a tu mascota, pinto a tu mascota.'
+        />
       </Head>
       <Layout>
         <Component {...pageProps} />
