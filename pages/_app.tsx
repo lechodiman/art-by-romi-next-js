@@ -15,7 +15,12 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <main className={`${playfair.variable}`}>
       <Head>
-        <title>Retratos Romi</title>
+        <title>Retratos Romi - Retratos Personalizados de Mascotas</title>
+        <meta
+          name='description'
+          content='Retratos óleo personalizados de tus mascotas, con un estilo único y realista. Captura la esencia de tu amigo peludo en una obra de arte.'
+        />
+        <meta
       </Head>
       <Layout>
         <Component {...pageProps} />
