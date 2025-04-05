@@ -49,6 +49,22 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta property='og:image:type' content='image/jpeg' />
         <meta property='og:image:width' content='1200' />
         <meta property='og:image:height' content='630' />
+        {/* twitter card*/}
+        <meta name='twitter:card' content='summary_large_image' />
+        <meta name='twitter:site' content='@tu_usuario' />
+        <meta name='twitter:creator' content='@tu_usuario' />
+        <meta
+          name='twitter:title'
+          content='Retratos Romi - Retratos Personalizados de Mascotas'
+        />
+        <meta
+          name='twitter:description'
+          content='Retratos al óleo personalizadas de mascotas. Un regalo único y especial para los amantes de los animales.'
+        />
+        <meta
+          name='twitter:image'
+          content='https://www.retratosromi.com/imagenes/portada.jpg'
+        />
       </Head>
       <Layout>
         <Component {...pageProps} />
