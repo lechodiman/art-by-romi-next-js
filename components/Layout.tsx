@@ -9,6 +9,7 @@ const navigation = {
   pages: [
     { name: 'Inicio', href: '/' },
     { name: 'Galería', href: '/portafolio' },
+    { name: 'Tienda', href: '/tienda' }, // Nueva página
     { name: 'Contáctame', href: '/contacto' },
     { name: 'Mi carrito', href: '/carrito', icon: ShoppingCartIcon },
   ],
