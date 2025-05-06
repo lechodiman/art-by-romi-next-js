@@ -1,5 +1,5 @@
 import { Menu, Transition } from '@headlessui/react';
-import { Bars3Icon } from '@heroicons/react/24/outline';
+import { Bars3Icon, ShoppingCartIcon } from '@heroicons/react/24/outline';
 import { InstagramIcon, TiktokIcon } from './SocialIcons';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -10,6 +10,7 @@ const navigation = {
     { name: 'Inicio', href: '/' },
     { name: 'Galería', href: '/portafolio' },
     { name: 'Contáctame', href: '/contacto' },
+    { name: 'Mi carrito', href: '/carrito', icon: ShoppingCartIcon },
   ],
 };
 
@@ -25,11 +26,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <nav className='flex space-x-6'>
               {navigation.pages.map((page) => (
                 <Link
-                  className='text-zinc-500 hover:text-zinc-700'
+                  className='flex items-center space-x-1 text-zinc-500 hover:text-zinc-700'
                   key={page.name}
                   href={page.href}
                 >
-                  {page.name}
+                  {page.icon && <page.icon className='w-5 h-5' />}
+                  <span>{page.name}</span>
                 </Link>
               ))}
             </nav>
@@ -62,10 +64,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   {navigation.pages.map((page) => (
                     <Menu.Item key={page.name}>
                       <Link
-                        className='text-zinc-500 hover:text-zinc-700'
+                        className='flex items-center space-x-1 text-zinc-500 hover:text-zinc-700'
                         href={page.href}
                       >
-                        {page.name}
+                        {page.icon && <page.icon className='w-5 h-5' />}
+                        <span>{page.name}</span>
                       </Link>
                     </Menu.Item>
                   ))}
