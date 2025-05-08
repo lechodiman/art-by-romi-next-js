@@ -39,20 +39,11 @@ const customizationOptions: CustomizationOption[] = [
   },
 ];
 
-export default function ProductDetail() {
+export default function ProductDetail({ product }: ProductDetailProps) {
   const router = useRouter();
-  const { id } = router.query;
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [petCount, setPetCount] = useState('0');
-
-  const product: Product = {
-    id: '1',
-    name: 'Retrato al óleo tamaño Mini',
-    description: 'Retrato personalizado al óleo sobre lienzo tamaño Mini de 20 cm x 25cm',
-    price: 40000,
-    images: ['/images/product1.jpg'],
-    category: 'retratos',
-  };
+  const { addToCart } = useCart();
 
   const calculateTotalPrice = () => {
     const basePrice = product.price;
@@ -152,7 +143,7 @@ export default function ProductDetail() {
               <button
                 onClick={() => {
                   addToCart({
-                    productId: product.id,
+                    productId: product._id,
                     quantity: 1,
                     options: selectedOptions,
                     petCount: petCount,
