@@ -22,7 +22,7 @@ const customizationOptions: CustomizationOption[] = [
     id: 'extra-pet',
     name: 'Agregar mascota(s)',
     description: 'Incluye mascota(s) adicional(es) en el retrato',
-    price: 0, // El precio base ahora será 0 y se calculará según la selección
+    price: 0,
     type: 'select',
     options: [
       { value: '0', label: 'Sin mascota adicional', price: 0 },
@@ -33,15 +33,16 @@ const customizationOptions: CustomizationOption[] = [
   {
     id: 'special-background',
     name: 'Fondo especial',
-    description:
-      'Añade un fondo personalizado al retrato (+$5.000), si no se selecciona esta opción, es por defecto un fondo de 1 color',
+    description: 'Añade un fondo personalizado al retrato (+$5.000)',
     price: 5000,
     type: 'checkbox',
   },
 ];
+
 interface ProductDetailProps {
   product: Product;
 }
+
 export default function ProductDetail({ product }: ProductDetailProps) {
   const router = useRouter();
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
@@ -82,9 +83,11 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                 className='object-cover rounded-lg'
               />
             </div>
+
             <div className='space-y-6'>
               <TypographyH1>{product.name}</TypographyH1>
               <p className='text-gray-600'>{product.description}</p>
+
               <div className='space-y-4'>
                 <h3 className='text-lg font-semibold text-gray-900'>Personalización</h3>
                 {customizationOptions.map((option) => (
@@ -132,6 +135,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                   </div>
                 ))}
               </div>
+
               <div className='pt-4 border-t border-gray-200'>
                 <p className='text-2xl font-bold text-gray-900'>
                   ${calculateTotalPrice().toLocaleString()}
@@ -172,7 +176,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   if (!product) {
     return {
-      notFound: true, // Retornará una página 404 si el producto no existe
+      notFound: true,
     };
   }
 
@@ -180,7 +184,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     props: {
       product,
     },
-    revalidate: 3600, // Revalidar cada hora
+    revalidate: 3600,
   };
 };
 
@@ -192,6 +196,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
     paths: products.map((product: Product) => ({
       params: { id: product._id },
     })),
-    fallback: 'blocking', // Muestra una página de carga mientras se genera el contenido
+    fallback: 'blocking',
   };
 };
