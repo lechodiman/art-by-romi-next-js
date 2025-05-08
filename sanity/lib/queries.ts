@@ -18,6 +18,27 @@ export const featuredPaintingsQuery = groq`
   }
 `;
 
+const productFields = groq`
+  _id,
+  name,
+  description,
+  price,
+  "images": images[].asset->url,
+  category
+`;
+
+export const allProductsQuery = groq`
+  *[_type == "product"] {
+    ${productFields}
+  }
+`;
+
+export const productByIdQuery = groq`
+  *[_type == "product" && _id == $id][0] {
+    ${productFields}
+  }
+`;
+
 export interface Painting {
   _id: string;
   name: string;
