@@ -3,6 +3,7 @@ import '@/styles/globals.css';
 import type { AppProps } from 'next/app';
 import { Playfair_Display } from 'next/font/google';
 import Head from 'next/head';
+import { CartProvider } from '@/context/CartContext';
 
 const playfair = Playfair_Display({
   variable: '--font-playfair',
@@ -66,9 +67,11 @@ export default function App({ Component, pageProps }: AppProps) {
           content='https://www.retratosromi.com/imagenes/portada.jpg'
         />
       </Head>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <CartProvider>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </CartProvider>
     </main>
   );
 }

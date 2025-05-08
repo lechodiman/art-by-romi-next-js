@@ -89,7 +89,6 @@ export default function ProductDetail() {
             <div className='space-y-6'>
               <TypographyH1>{product.name}</TypographyH1>
               <p className='text-gray-600'>{product.description}</p>
-
               <div className='space-y-4'>
                 <h3 className='text-lg font-semibold text-gray-900'>Personalización</h3>
                 {customizationOptions.map((option) => (
@@ -137,7 +136,6 @@ export default function ProductDetail() {
                   </div>
                 ))}
               </div>
-
               <div className='pt-4 border-t border-gray-200'>
                 <p className='text-2xl font-bold text-gray-900'>
                   ${calculateTotalPrice().toLocaleString()}
@@ -148,10 +146,15 @@ export default function ProductDetail() {
                   </p>
                 )}
               </div>
-
+              const {addToCart} = useCart();
               <button
                 onClick={() => {
-                  /* Implementar lógica del carrito */
+                  addToCart({
+                    productId: product.id,
+                    quantity: 1,
+                    options: selectedOptions,
+                    petCount: petCount,
+                  });
                 }}
                 className='w-full px-6 py-3 text-white transition-colors rounded-md bg-zinc-700 hover:bg-zinc-600'
               >
