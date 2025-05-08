@@ -46,7 +46,7 @@ export default function ProductDetail() {
   const product: Product = {
     id: '1',
     name: 'Retrato al óleo tamaño Mini',
-    description: 'Retrato personalizado al óelo sobre lienzo tamaño Mini de 20 cm x 25cm',
+    description: 'Retrato personalizado al óleo sobre lienzo tamaño Mini de 20 cm x 25cm',
     price: 40000,
     images: ['/images/product1.jpg'],
     category: 'retratos',
