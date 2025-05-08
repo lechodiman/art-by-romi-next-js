@@ -9,20 +9,30 @@ interface CustomizationOption {
   name: string;
   description: string;
   price: number;
+  type?: 'checkbox' | 'select';
+  options?: { value: string; label: string; price: number }[];
 }
 
 const customizationOptions: CustomizationOption[] = [
   {
     id: 'extra-pet',
-    name: 'Agregar mascota',
-    description: 'Incluye una mascota adicional en el retrato (+$15.000)',
-    price: 15000,
+    name: 'Agregar mascota(s)',
+    description: 'Incluye mascota(s) adicional(es) en el retrato',
+    price: 0, // El precio base ahora será 0 y se calculará según la selección
+    type: 'select',
+    options: [
+      { value: '0', label: 'Sin mascotas', price: 0 },
+      { value: '1', label: '1 mascota (+$15.000)', price: 15000 },
+      { value: '2', label: '2 mascotas (+$20.000)', price: 20000 },
+    ],
   },
   {
     id: 'special-background',
     name: 'Fondo especial',
-    description: 'Añade un fondo personalizado al retrato (+$10.000)',
-    price: 10000,
+    description:
+      'Añade un fondo personalizado al retrato (+$5.000), si no se selecciona esta opción, es por defecto un fondo de 1 color',
+    price: 5000,
+    type: 'checkbox',
   },
 ];
 
@@ -30,6 +40,7 @@ export default function ProductDetail() {
   const router = useRouter();
   const { id } = router.query;
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+  const [petCount, setPetCount] = useState('0');
 
   const product: Product = {
     id: '1',
@@ -44,7 +55,13 @@ export default function ProductDetail() {
     const basePrice = product.price;
     const optionsPrice = selectedOptions.reduce((total, optionId) => {
       const option = customizationOptions.find((opt) => opt.id === optionId);
-      return total + (option?.price || 0);
+      if (!option) return total;
+
+      if (option.id === 'extra-pet') {
+        const petOption = option.options?.find((opt) => opt.value === petCount);
+        return total + (petOption?.price || 0);
+      }
+      return total + option.price;
     }, 0);
     return basePrice + optionsPrice;
   };
@@ -76,15 +93,43 @@ export default function ProductDetail() {
                 <h3 className='text-lg font-semibold text-gray-900'>Personalización</h3>
                 {customizationOptions.map((option) => (
                   <div key={option.id} className='space-y-2'>
-                    <label className='flex items-center space-x-2'>
-                      <input
-                        type='checkbox'
-                        checked={selectedOptions.includes(option.id)}
-                        onChange={() => toggleOption(option.id)}
-                        className='w-4 h-4 rounded text-zinc-700 focus:ring-zinc-500'
-                      />
-                      <span className='font-medium text-gray-900'>{option.name}</span>
-                    </label>
+                    {option.type === 'select' ? (
+                      <div>
+                        <label className='block mb-2 font-medium text-gray-900'>
+                          {option.name}
+                        </label>
+                        <select
+                          value={petCount}
+                          onChange={(e) => {
+                            setPetCount(e.target.value);
+                            if (e.target.value === '0') {
+                              setSelectedOptions((prev) =>
+                                prev.filter((id) => id !== option.id)
+                              );
+                            } else if (!selectedOptions.includes(option.id)) {
+                              setSelectedOptions((prev) => [...prev, option.id]);
+                            }
+                          }}
+                          className='w-full border-gray-300 rounded-md shadow-sm focus:border-zinc-500 focus:ring-zinc-500'
+                        >
+                          {option.options?.map((opt) => (
+                            <option key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    ) : (
+                      <label className='flex items-center space-x-2'>
+                        <input
+                          type='checkbox'
+                          checked={selectedOptions.includes(option.id)}
+                          onChange={() => toggleOption(option.id)}
+                          className='w-4 h-4 rounded text-zinc-700 focus:ring-zinc-500'
+                        />
+                        <span className='font-medium text-gray-900'>{option.name}</span>
+                      </label>
+                    )}
                     {selectedOptions.includes(option.id) && (
                       <p className='pl-6 text-sm text-gray-600'>{option.description}</p>
                     )}
