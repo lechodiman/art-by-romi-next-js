@@ -3,6 +3,7 @@ import { Product } from '@/types/Product';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { GetStaticProps, GetStaticPaths } from 'next';
 
 interface CustomizationOption {
   id: string;
@@ -163,3 +164,25 @@ export default function ProductDetail() {
     </main>
   );
 }
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const product = await getProduct(params?.id as string); // Implementar función getProduct
+
+  return {
+    props: {
+      product,
+    },
+    revalidate: 3600, // Revalidar cada hora
+  };
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const products = await getAllProducts(); // Implementar función getAllProducts
+
+  return {
+    paths: products.map((product) => ({
+      params: { id: product.id },
+    })),
+    fallback: 'blocking',
+  };
+};
