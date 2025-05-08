@@ -18,3 +18,11 @@ export async function getPaintings(client: SanityClient) {
 export async function getSiteSettings(client: SanityClient) {
   return await client.fetch(siteSettingsQuery);
 }
+
+export async function getAllProducts(client: SanityClient) {
+  return await client.fetch(allProductsQuery);
+}
+
+export async function getProduct(client: SanityClient, id: string) {
+  return await client.fetch(productByIdQuery, { id });
+}
