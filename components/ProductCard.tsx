@@ -20,7 +20,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         </p>
         <div className='flex space-x-3'>
           <Link
-            href={`/tienda/${product.id}`}
+            href={`/tienda/${product._id}`}
             className='flex-1 px-4 py-2 text-center transition-colors rounded-md bg-zinc-100 text-zinc-700 hover:bg-zinc-200'
           >
             Ver

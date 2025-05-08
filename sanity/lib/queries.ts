@@ -29,13 +29,23 @@ const productFields = groq`
 
 export const allProductsQuery = groq`
   *[_type == "product"] {
-    ${productFields}
+    _id,
+    name,
+    description,
+    price,
+    "images": images[].asset->url,
+    category
   }
 `;
 
 export const productByIdQuery = groq`
   *[_type == "product" && _id == $id][0] {
-    ${productFields}
+    _id,
+    name,
+    description,
+    price,
+    "images": images[].asset->url,
+    category
   }
 `;
 
