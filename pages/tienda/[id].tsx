@@ -21,9 +21,9 @@ const customizationOptions: CustomizationOption[] = [
     price: 0, // El precio base ahora será 0 y se calculará según la selección
     type: 'select',
     options: [
-      { value: '0', label: 'Sin mascotas', price: 0 },
-      { value: '1', label: '1 mascota (+$15.000)', price: 15000 },
-      { value: '2', label: '2 mascotas (+$20.000)', price: 20000 },
+      { value: '0', label: 'Sin mascota adicional', price: 0 },
+      { value: '1', label: '1 mascota adicional (+$15.000)', price: 15000 },
+      { value: '2', label: '2 mascotas adicionales (+$20.000)', price: 20000 },
     ],
   },
   {
@@ -44,9 +44,9 @@ export default function ProductDetail() {
 
   const product: Product = {
     id: '1',
-    name: 'Retrato a Lápiz',
-    description: 'Retrato personalizado en lápiz grafito sobre papel',
-    price: 25000,
+    name: 'Retrato al óleo tamaño Mini',
+    description: 'Retrato personalizado al óelo sobre lienzo tamaño Mini de 20 cm x 25cm',
+    price: 40000,
     images: ['/images/product1.jpg'],
     category: 'retratos',
   };
