@@ -5,4 +5,5 @@ export interface Product {
   price: number;
   images: string[];
   category: string;
+  size: 'mini' | 'medium' | 'large';
 }

@@ -11,8 +11,8 @@ import { useCart } from '@/context/CartContext';
 interface CustomizationOption {
   id: string;
   name: string;
-  description: string;
-  price: number;
+  description: string | ((product: Product) => string);
+  price: number | ((product: Product) => number);
   type?: 'checkbox' | 'select';
   options?: { value: string; label: string; price: number }[];
 }
@@ -20,7 +20,7 @@ interface CustomizationOption {
 const customizationOptions: CustomizationOption[] = [
   {
     id: 'extra-pet',
-    name: 'Agregar mascota(s)',
+    name: 'Agregar mascota(s) (opcional)',
     description: 'Incluye mascota(s) adicional(es) en el retrato',
     price: 0,
     type: 'select',
@@ -32,9 +32,32 @@ const customizationOptions: CustomizationOption[] = [
   },
   {
     id: 'special-background',
-    name: 'Fondo especial',
-    description: 'Añade un fondo personalizado al retrato (+$5.000)',
+    name: 'Fondo especial (opcional)',
+    description:
+      'Añade un fondo personalizado al retrato (+$5.000). Si no seleccionas esta opción, el fondo será de un solo color.',
     price: 5000,
+    type: 'checkbox',
+  },
+  {
+    id: 'frame',
+    name: 'Añadir marco (opcional)',
+    description: (product: Product) => {
+      const prices = {
+        mini: 3000,
+        medium: 5000,
+        large: 7000,
+      };
+      const framePrice = product.size ? prices[product.size] : prices.medium;
+      return `Añade un marco decorativo al retrato (+$${framePrice.toLocaleString()}). El retrato viene por defecto sin marco.`;
+    },
+    price: (product: Product) => {
+      const prices = {
+        mini: 3000,
+        medium: 5000,
+        large: 7000,
+      };
+      return product.size ? prices[product.size] : prices.medium;
+    },
     type: 'checkbox',
   },
 ];
@@ -59,7 +82,27 @@ export default function ProductDetail({ product }: ProductDetailProps) {
         const petOption = option.options?.find((opt) => opt.value === petCount);
         return total + (petOption?.price || 0);
       }
-      return total + option.price;
+
+      // Manejo específico para la opción de marco
+      if (option.id === 'frame') {
+        const prices = {
+          mini: 3000,
+          medium: 5000,
+          large: 7000,
+        };
+
+        // Validación del tamaño y precio por defecto
+        const framePrice =
+          product.size && prices[product.size] ? prices[product.size] : prices.medium; // Usamos medium como valor por defecto
+
+        console.log('Tamaño del producto:', product.size);
+        console.log('Precio del marco:', framePrice);
+
+        return total + framePrice;
+      }
+
+      // Para otras opciones (como fondo especial)
+      return total + (typeof option.price === 'number' ? option.price : 0);
     }, 0);
     return basePrice + optionsPrice;
   };
@@ -91,7 +134,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               <div className='space-y-4'>
                 <h3 className='text-lg font-semibold text-gray-900'>Personalización</h3>
                 {customizationOptions.map((option) => (
-                  <div key={option.id} className='space-y-2'>
+                  <div key={option.id} className='p-4 space-y-2 rounded-lg bg-gray-50'>
                     {option.type === 'select' ? (
                       <div>
                         <label className='block mb-2 font-medium text-gray-900'>
@@ -129,9 +172,11 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                         <span className='font-medium text-gray-900'>{option.name}</span>
                       </label>
                     )}
-                    {selectedOptions.includes(option.id) && (
-                      <p className='pl-6 text-sm text-gray-600'>{option.description}</p>
-                    )}
+                    <p className='text-sm text-gray-600'>
+                      {typeof option.description === 'function'
+                        ? option.description(product)
+                        : option.description}
+                    </p>
                   </div>
                 ))}
               </div>

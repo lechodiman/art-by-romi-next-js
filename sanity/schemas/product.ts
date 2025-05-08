@@ -40,6 +40,19 @@ const productSchema = {
       },
       validation: (Rule: any) => Rule.required(),
     },
+    {
+      name: 'size',
+      title: 'Tamaño',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Mini', value: 'mini' },
+          { title: 'Mediano', value: 'medium' },
+          { title: 'Grande', value: 'large' },
+        ],
+      },
+      validation: (Rule: any) => Rule.required(),
+    },
   ],
 };
 
