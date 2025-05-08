@@ -4,6 +4,8 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { GetStaticProps, GetStaticPaths } from 'next';
+import { getClient } from '@/sanity/lib/client';
+import { allProductsQuery, productByIdQuery } from '@/sanity/lib/queries';
 
 interface CustomizationOption {
   id: string;
@@ -169,7 +171,16 @@ export default function ProductDetail() {
 }
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const product = await getProduct(params?.id as string); // Implementar función getProduct
+  const client = getClient();
+  const product = await client.fetch(productByIdQuery, {
+    id: params?.id as string,
+  });
+
+  if (!product) {
+    return {
+      notFound: true, // Retornará una página 404 si el producto no existe
+    };
+  }
 
   return {
     props: {
@@ -180,12 +191,13 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const products = await getAllProducts(); // Implementar función getAllProducts
+  const client = getClient();
+  const products = await client.fetch(allProductsQuery);
 
   return {
-    paths: products.map((product) => ({
-      params: { id: product.id },
+    paths: products.map((product: Product) => ({
+      params: { id: product._id },
     })),
-    fallback: 'blocking',
+    fallback: 'blocking', // Muestra una página de carga mientras se genera el contenido
   };
 };
