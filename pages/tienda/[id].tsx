@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { GetStaticProps, GetStaticPaths } from 'next';
 import { getClient } from '@/sanity/lib/client';
 import { allProductsQuery, productByIdQuery } from '@/sanity/lib/queries';
+import { useCart } from '@/context/CartContext';
 
 interface CustomizationOption {
   id: string;
@@ -38,7 +39,9 @@ const customizationOptions: CustomizationOption[] = [
     type: 'checkbox',
   },
 ];
-
+interface ProductDetailProps {
+  product: Product;
+}
 export default function ProductDetail({ product }: ProductDetailProps) {
   const router = useRouter();
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
@@ -139,7 +142,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                   </p>
                 )}
               </div>
-              const {addToCart} = useCart();
+
               <button
                 onClick={() => {
                   addToCart({
