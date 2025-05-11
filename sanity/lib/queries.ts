@@ -6,7 +6,7 @@ const paintingFields = groq`
   "image": image.asset->url
 `;
 
-export const allPaitingsQuery = groq`
+export const allPaintingsQuery = groq`
   *[_type == 'painting'] {
     ${paintingFields}
   }
@@ -24,7 +24,8 @@ const productFields = groq`
   description,
   price,
   "images": images[].asset->url,
-  category
+  category,
+  size
 `;
 
 export const allProductsQuery = groq`
@@ -50,7 +51,8 @@ export const productByIdQuery = groq`
     description,
     price,
     "images": images[].asset->url,
-    category
+    category,
+    size  // Agregar este campo
   }
 `;
 
@@ -58,6 +60,14 @@ export interface Painting {
   _id: string;
   name: string;
   image: string;
+}
+
+export interface SanityImage {
+  _type: 'image';
+  asset: {
+    _ref: string;
+    _type: 'reference';
+  };
 }
 
 export interface SiteSettings {
@@ -72,7 +82,7 @@ export interface SiteSettings {
   testimonials: Array<{
     _id: string;
     name: string;
-    image: any; // You might want to create a more specific type for Sanity images
+    image: SanityImage; // Reemplazar any por SanityImage
     text: string;
   }>;
   featuredPaintings: Painting[];
