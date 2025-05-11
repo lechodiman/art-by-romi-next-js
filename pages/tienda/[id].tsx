@@ -104,7 +104,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
       // Para otras opciones (como fondo especial)
       return total + (typeof option.price === 'number' ? option.price : 0);
     }, 0);
-    return basePrice + optionsPrice;
+    return (basePrice + optionsPrice).toLocaleString('es-CL');
   };
 
   const toggleOption = (optionId: string) => {
@@ -187,7 +187,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
               <div className='pt-4 border-t border-gray-200'>
                 <p className='text-2xl font-bold text-gray-900'>
-                  ${calculateTotalPrice().toLocaleString()}
+                  ${calculateTotalPrice()}
                 </p>
                 {selectedOptions.length > 0 && (
                   <p className='text-sm text-gray-600'>

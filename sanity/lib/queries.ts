@@ -119,38 +119,6 @@ export const siteSettingsQuery = groq`
   }
 `;
 
-const customizationOptions: CustomizationOption[] = [
-  {
-    id: 'extra-pet',
-    name: 'Agregar mascota(s) (opcional)',
-    description: 'Incluye mascota(s) adicional(es) en el retrato',
-    price: 0,
-    type: 'select',
-    options: [
-      { value: '0', label: 'Sin mascota adicional', price: 0 },
-      { value: '1', label: `1 mascota adicional (+$${(15000).toLocaleString('es-CL')})`, price: 15000 },
-      { value: '2', label: `2 mascotas adicionales (+$${(20000).toLocaleString('es-CL')})`, price: 20000 },
-    ],
-  },
-  {
-    id: 'special-background',
-    name: 'Fondo especial (opcional)',
-    description: `Añade un fondo personalizado al retrato (+$${(5000).toLocaleString('es-CL')}). Si no seleccionas esta opción, el fondo será de un solo color.`,
-    price: 5000,
-    type: 'checkbox',
-  }
-];
-
-// Modifica la función calculateTotalPrice
-const calculateTotalPrice = () => {
-  const basePrice = product.price;
-  const optionsPrice = selectedOptions.reduce((total, optionId) => {
-    // ... lógica existente
-  }, 0);
-  return (basePrice + optionsPrice).toLocaleString('es-CL');
-};
-
-// En el JSX
 <p className='text-lg font-bold text-gray-900'>
   ${product.price.toLocaleString('es-CL')}
 </p>
