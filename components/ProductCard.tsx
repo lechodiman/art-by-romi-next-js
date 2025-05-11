@@ -9,8 +9,17 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   return (
     <div className='overflow-hidden bg-white rounded-lg shadow-md'>
-      <div className='relative h-64'>
-        <Image src={product.images[0]} alt={product.name} fill className='object-cover' />
+      {/* Cambiar el div de la imagen para que tenga proporción vertical 4:5 */}
+      <div className='relative w-full pt-[125%]'>
+        {' '}
+        {/* 125% = 5/4 = proporción vertical */}
+        <Image
+          src={product.images[0]}
+          alt={product.name}
+          fill
+          className='object-cover'
+          sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
+        />
       </div>
       <div className='p-4 space-y-3'>
         <h2 className='text-xl font-semibold text-gray-800'>{product.name}</h2>
