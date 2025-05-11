@@ -118,12 +118,16 @@ export default function ProductDetail({ product }: ProductDetailProps) {
       <section className='container px-5 mx-auto py-14'>
         <div className='max-w-6xl p-6 mx-auto bg-white rounded-lg shadow-md'>
           <div className='grid grid-cols-1 gap-8 md:grid-cols-2'>
-            <div className='relative h-96'>
+            {/* Cambiar el div de la imagen para que tenga proporción vertical 4:5 */}
+            <div className='relative w-full pt-[125%]'>
+              {' '}
+              {/* 125% = 5/4 = proporción vertical */}
               <Image
                 src={product.images[0]}
                 alt={product.name}
                 fill
                 className='object-cover rounded-lg'
+                sizes='(max-width: 768px) 100vw, 50vw'
               />
             </div>
 
