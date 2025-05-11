@@ -29,18 +29,15 @@ const productFields = groq`
 `;
 
 export const allProductsQuery = groq`
-  *[_type == "product"] | order(order(size match {
-    "mini": 0,
-    "medium": 1,
-    "large": 2
-  }) asc) {
-    _id,
-    name,
-    description,
-    price,
-    "images": images[].asset->url,
-    category,
-    size
+  *[_type == "product"] | order(
+    select(
+      size == "mini" => 1,
+      size == "medium" => 2,
+      size == "large" => 3,
+      4
+    )
+  ) {
+    ${productFields}
   }
 `;
 
