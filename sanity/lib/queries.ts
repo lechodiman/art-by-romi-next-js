@@ -29,11 +29,11 @@ const productFields = groq`
 
 export const allProductsQuery = groq`
   *[_type == "product"] | order(
-    size match {
-      "mini": 0,
-      "medium": 1,
-      "large": 2,
-      *: 3
+    case size {
+      "mini" => 1,
+      "medium" => 2,
+      "large" => 3,
+      _ => 4
     }
   ) {
     _id,
