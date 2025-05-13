@@ -3,7 +3,7 @@ import { createClient, SanityClient } from 'next-sanity';
 import { apiVersion, dataset, projectId, useCdn } from '../env';
 import { Product } from '@/types/Product';
 import {
-  allPaitingsQuery,
+  allPaintingsQuery,
   siteSettingsQuery,
   allProductsQuery,
   productByIdQuery,
@@ -18,7 +18,7 @@ export const client = createClient({
 });
 
 export async function getPaintings(client: SanityClient) {
-  return (await client.fetch(allPaitingsQuery)) || [];
+  return (await client.fetch(allPaintingsQuery)) || [];
 }
 
 export async function getSiteSettings(client: SanityClient) {

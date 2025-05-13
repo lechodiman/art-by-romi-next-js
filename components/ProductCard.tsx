@@ -25,7 +25,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         <h2 className='text-xl font-semibold text-gray-800'>{product.name}</h2>
         <p className='text-sm text-gray-600 line-clamp-2'>{product.description}</p>
         <p className='text-lg font-bold text-gray-900'>
-          ${product.price.toLocaleString()}
+          {product.price.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}
         </p>
         <div className='flex space-x-3'>
           <Link

@@ -118,12 +118,3 @@ export const siteSettingsQuery = groq`
     }
   }
 `;
-
-<p className='text-lg font-bold text-gray-900'>
-  ${product.price.toLocaleString('es-CL')}
-</p>
-{selectedOptions.length > 0 && (
-  <p className='text-sm text-gray-600'>
-    Precio base: ${product.price.toLocaleString('es-CL')}
-  </p>
-)}
