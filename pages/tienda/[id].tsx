@@ -48,7 +48,7 @@ const customizationOptions: CustomizationOption[] = [
         large: 7000,
       };
       const framePrice = product.size ? prices[product.size] : prices.medium;
-      return `Añade un marco decorativo al retrato (+$${framePrice.toLocaleString()}). El retrato viene por defecto sin marco.`;
+      return `Añade un marco decorativo al retrato (+$${framePrice.toLocaleString('es-CL')}). El retrato viene por defecto sin marco.`;
     },
     price: (product: Product) => {
       const prices = {
