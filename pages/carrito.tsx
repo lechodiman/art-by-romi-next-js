@@ -6,8 +6,8 @@ import { getClient } from '@/sanity/lib/client';
 import { productsByIdsQuery } from '@/sanity/lib/queries';
 import Image from 'next/image';
 import { CartItemPrice } from '@/components/cart/CartItemPrice';
-import { EmptyCart } from '@/components/cart/EmptyCart';
 import { CartVariationSwitcher } from '@/components/cart/CartVariationSwitcher';
+import { EmptyCart } from '@/components/cart/EmptyCart';
 
 export default function Carrito() {
   const { items, removeFromCart, updateQuantity } = useCart();
