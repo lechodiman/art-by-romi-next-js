@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { CustomLink } from './CustomLink';
-import { ArrowLongRightIcon } from '@heroicons/react/24/outline';
+import { ArrowRight } from 'lucide-react';
 import { urlForImage } from '@/sanity/lib/image';
 import { SiteSettings } from '@/sanity/lib/queries';
 
@@ -36,7 +36,7 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
           </div>
 
           <CustomLink variant='primary' href='/contacto'>
-            Ponte en contacto <ArrowLongRightIcon className='inline-block w-5 h-5' />
+            Ponte en contacto <ArrowRight className='inline-block w-5 h-5' />
           </CustomLink>
         </div>
       </div>

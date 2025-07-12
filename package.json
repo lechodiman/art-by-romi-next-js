@@ -23,6 +23,7 @@
     "axios": "^1.7.7",
     "eslint": "8.36.0",
     "eslint-config-next": "13.2.4",
+    "lucide-react": "^0.525.0",
     "next": "latest",
     "next-sanity": "^9.4.2",
     "nodemailer": "^6.9.4",

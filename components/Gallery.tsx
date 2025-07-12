@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { CustomLink } from './CustomLink';
-import { ArrowLongRightIcon } from '@heroicons/react/24/outline';
+import { ArrowRight } from 'lucide-react';
 import { urlForImage } from '@/sanity/lib/image';
 import { Painting } from '@/sanity/lib/queries';
 
@@ -30,7 +30,7 @@ export default function Gallery({ featuredPaintings }: GalleryProps) {
         </div>
         <div className='mt-10 text-center'>
           <CustomLink href='/portafolio'>
-            Ver todo el portafolio <ArrowLongRightIcon className='inline-block w-5 h-5' />
+            Ver todo el portafolio <ArrowRight className='inline-block w-5 h-5' />
           </CustomLink>
         </div>
       </div>

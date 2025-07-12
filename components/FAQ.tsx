@@ -1,5 +1,5 @@
 import { CustomLink } from './CustomLink';
-import { ArrowLongRightIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
+import { ArrowRight, ChevronUp } from 'lucide-react';
 import { SiteSettings } from '@/sanity/lib/queries';
 import { Disclosure, Transition } from '@headlessui/react';
 
@@ -23,7 +23,7 @@ export default function FAQ({ faqItems }: FAQProps) {
                   <>
                     <Disclosure.Button className='flex justify-between w-full px-4 py-2 text-left rounded-lg text-neutral-900 bg-neutral-100 hover:bg-neutral-200 focus:outline-none focus-visible:ring focus-visible:ring-neutral-500 focus-visible:ring-opacity-75'>
                       <span>{item.question}</span>
-                      <ChevronUpIcon
+                      <ChevronUp
                         className={`${
                           open ? 'transform rotate-180' : ''
                         } w-5 h-5 text-neutral-500`}
@@ -49,7 +49,7 @@ export default function FAQ({ faqItems }: FAQProps) {
 
           <CustomLink href='/contacto'>
             ¿Tienes más preguntas? Contáctame{' '}
-            <ArrowLongRightIcon className='inline-block w-5 h-5' />
+            <ArrowRight className='inline-block w-5 h-5' />
           </CustomLink>
         </div>
       </div>

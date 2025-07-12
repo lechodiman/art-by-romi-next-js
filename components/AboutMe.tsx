@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { CustomLink } from './CustomLink';
-import { ArrowLongRightIcon } from '@heroicons/react/24/outline';
+import { ArrowRight } from 'lucide-react';
 import { urlForImage } from '@/sanity/lib/image';
 import { PortableText } from '@portabletext/react';
 import { SiteSettings } from '@/sanity/lib/queries';
@@ -31,7 +31,7 @@ export default function AboutMe({ aboutMe }: AboutMeProps) {
               <PortableText value={aboutMe.text} />
               <div className='mt-6'>
                 <CustomLink href='/portafolio'>
-                  Ver Portafolio <ArrowLongRightIcon className='inline-block w-5 h-5' />
+                  Ver Portafolio <ArrowRight className='inline-block w-5 h-5' />
                 </CustomLink>
               </div>
             </div>

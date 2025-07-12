@@ -1,6 +1,7 @@
 import { Menu, Transition } from '@headlessui/react';
-import { Bars3Icon, ShoppingCartIcon } from '@heroicons/react/24/outline';
-import { InstagramIcon, TiktokIcon } from './SocialIcons';
+import { Menu as MenuIcon, ShoppingCart } from 'lucide-react';
+import { TiktokIcon } from './SocialIcons';
+import { InstagramIcon } from './InstagramIcon';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Fragment } from 'react';
@@ -11,7 +12,7 @@ const navigation = {
     { name: 'Galería', href: '/portafolio' },
     { name: 'Tienda', href: '/tienda' }, // Nueva página
     { name: 'Contáctame', href: '/contacto' },
-    { name: 'Mi carrito', href: '/carrito', icon: ShoppingCartIcon },
+    { name: 'Mi carrito', href: '/carrito', icon: ShoppingCart },
   ],
 };
 
@@ -49,7 +50,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   />
                 </Link>
                 <Menu.Button>
-                  <Bars3Icon className='w-7 h-7' />
+                  <MenuIcon className='w-7 h-7' />
                 </Menu.Button>
               </div>
               <Transition
