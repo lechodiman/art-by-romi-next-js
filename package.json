@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.7.19",
-    "@heroicons/react": "^2.0.16",
     "@sanity/client": "^6.20.1",
     "@sanity/image-url": "^1.0.2",
     "@sanity/react-loader": "^1.10.4",
