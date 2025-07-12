@@ -5,6 +5,8 @@ import { InstagramIcon } from './InstagramIcon';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Fragment } from 'react';
+import { useCart } from '@/context/CartContext';
+import { Badge } from '@/components/ui/badge';
 
 const navigation = {
   pages: [
@@ -17,6 +19,9 @@ const navigation = {
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const { items } = useCart();
+  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+
   return (
     <div className='flex flex-col min-h-screen bg-white text-zinc-500'>
       <header className='px-5 py-5 bg-zinc-100'>
@@ -28,12 +33,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <nav className='flex space-x-6'>
               {navigation.pages.map((page) => (
                 <Link
-                  className='flex items-center space-x-1 text-zinc-500 hover:text-zinc-700'
+                  className='flex items-center space-x-1 text-zinc-500 hover:text-zinc-700 relative'
                   key={page.name}
                   href={page.href}
                 >
                   {page.icon && <page.icon className='w-5 h-5' />}
-                  <span>{page.name}</span>
+                  {page.href !== '/carrito' && <span>{page.name}</span>}
+                  {page.href === '/carrito' && totalItems > 0 && (
+                    <Badge className="absolute -top-3 -right-3 px-1.5 py-0.5 text-xs bg-zinc-600 hover:bg-zinc-700 text-white">
+                      {totalItems}
+                    </Badge>
+                  )}
                 </Link>
               ))}
             </nav>
@@ -66,11 +76,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   {navigation.pages.map((page) => (
                     <Menu.Item key={page.name}>
                       <Link
-                        className='flex items-center space-x-1 text-zinc-500 hover:text-zinc-700'
+                        className='flex items-center space-x-1 text-zinc-500 hover:text-zinc-700 relative'
                         href={page.href}
                       >
                         {page.icon && <page.icon className='w-5 h-5' />}
                         <span>{page.name}</span>
+                        {page.href === '/carrito' && totalItems > 0 && (
+                          <Badge className="ml-2 px-1.5 py-0.5 text-xs bg-zinc-600 hover:bg-zinc-700 text-white">
+                            {totalItems}
+                          </Badge>
+                        )}
                       </Link>
                     </Menu.Item>
                   ))}
