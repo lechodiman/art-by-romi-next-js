@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { CartItemPrice } from '@/components/cart/CartItemPrice';
 import { EmptyCart } from '@/components/cart/EmptyCart';
 import { CartVariationSwitcher } from '@/components/cart/CartVariationSwitcher';
+
 export default function Carrito() {
   const { items, removeFromCart, updateQuantity } = useCart();
   const [products, setProducts] = useState<Product[]>([]);
@@ -22,8 +23,10 @@ export default function Carrito() {
 
       try {
         const client = getClient();
-        const productIds = items.map(item => item.productId);
-        const fetchedProducts = await client.fetch(productsByIdsQuery, { ids: productIds });
+        const productIds = items.map((item) => item.productId);
+        const fetchedProducts = await client.fetch(productsByIdsQuery, {
+          ids: productIds,
+        });
         setProducts(fetchedProducts);
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -36,7 +39,7 @@ export default function Carrito() {
   }, [items]);
 
   const getProduct = (productId: string) => {
-    return products.find(p => p._id === productId);
+    return products.find((p) => p._id === productId);
   };
 
   const calculateSubtotal = () => {
@@ -70,25 +73,27 @@ export default function Carrito() {
         itemPrice += framePrices[product.size] || framePrices.medium;
       }
 
-      return total + (itemPrice * item.quantity);
+      return total + itemPrice * item.quantity;
     }, 0);
   };
 
   const getCustomizationText = (item: any, product: Product) => {
     const customizations = [];
-    
+
     if (item.options.includes('extra-pet') && item.petCount !== '0') {
-      customizations.push(`+${item.petCount} mascota${item.petCount === '1' ? '' : 's'} adicional${item.petCount === '1' ? '' : 'es'}`);
+      customizations.push(
+        `+${item.petCount} mascota${item.petCount === '1' ? '' : 's'} adicional${item.petCount === '1' ? '' : 'es'}`
+      );
     }
-    
+
     if (item.options.includes('special-background')) {
       customizations.push('Fondo especial');
     }
-    
+
     if (item.options.includes('frame')) {
       customizations.push(`Marco (${product.size})`);
     }
-    
+
     return customizations.join(' • ');
   };
 
@@ -120,22 +125,22 @@ export default function Carrito() {
     <main className='flex-grow bg-gray-100'>
       <section className='container flex-grow px-5 mx-auto space-y-8 py-14'>
         <TypographyH1 className='text-center'>Mi Carrito</TypographyH1>
-        
+
         <CartVariationSwitcher />
-        
+
         <div className='max-w-6xl mx-auto'>
           <div className='grid grid-cols-1 gap-8 lg:grid-cols-3'>
             {/* Cart Items */}
-            <div className='lg:col-span-2 space-y-4'>
+            <div className='space-y-4 lg:col-span-2'>
               {items.map((item, index) => {
                 const product = getProduct(item.productId);
                 if (!product) return null;
 
                 return (
-                  <div key={index} className='bg-white rounded-lg shadow-md p-6'>
-                    <div className='flex flex-col sm:flex-row gap-4'>
+                  <div key={index} className='p-6 bg-white rounded-lg shadow-md'>
+                    <div className='flex flex-col gap-4 sm:flex-row'>
                       {/* Product Image */}
-                      <div className='relative w-full sm:w-32 h-40 sm:h-40 flex-shrink-0'>
+                      <div className='relative flex-shrink-0 w-full h-40 sm:w-32 sm:h-40'>
                         <Image
                           src={product.images[0]}
                           alt={product.name}
@@ -147,7 +152,9 @@ export default function Carrito() {
 
                       {/* Product Details */}
                       <div className='flex-grow space-y-2'>
-                        <h3 className='text-lg font-semibold text-gray-900'>{product.name}</h3>
+                        <h3 className='text-lg font-semibold text-gray-900'>
+                          {product.name}
+                        </h3>
                         <p className='text-sm text-gray-600'>{product.description}</p>
                         {item.options.length > 0 && (
                           <p className='text-sm text-zinc-600'>
@@ -159,23 +166,30 @@ export default function Carrito() {
                         <div className='flex items-center gap-4 pt-2'>
                           <div className='flex items-center gap-2'>
                             <button
-                              onClick={() => updateQuantity(item.productId, Math.max(1, item.quantity - 1))}
-                              className='w-8 h-8 rounded-md border border-gray-300 hover:bg-gray-100'
+                              onClick={() =>
+                                updateQuantity(
+                                  item.productId,
+                                  Math.max(1, item.quantity - 1)
+                                )
+                              }
+                              className='w-8 h-8 border border-gray-300 rounded-md hover:bg-gray-100'
                             >
                               -
                             </button>
                             <span className='w-12 text-center'>{item.quantity}</span>
                             <button
-                              onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-                              className='w-8 h-8 rounded-md border border-gray-300 hover:bg-gray-100'
+                              onClick={() =>
+                                updateQuantity(item.productId, item.quantity + 1)
+                              }
+                              className='w-8 h-8 border border-gray-300 rounded-md hover:bg-gray-100'
                             >
                               +
                             </button>
                           </div>
-                          
+
                           <button
                             onClick={() => removeFromCart(item.productId)}
-                            className='text-red-600 hover:text-red-800 text-sm'
+                            className='text-sm text-red-600 hover:text-red-800'
                           >
                             Eliminar
                           </button>
@@ -184,15 +198,13 @@ export default function Carrito() {
 
                       {/* Price */}
                       <div className='text-right'>
-                        <CartItemPrice 
-                          product={product} 
-                          options={item.options} 
-                          petCount={item.petCount} 
+                        <CartItemPrice
+                          product={product}
+                          options={item.options}
+                          petCount={item.petCount}
                         />
                         {item.quantity > 1 && (
-                          <p className='text-sm text-gray-600 mt-1'>
-                            x{item.quantity}
-                          </p>
+                          <p className='mt-1 text-sm text-gray-600'>x{item.quantity}</p>
                         )}
                       </div>
                     </div>
@@ -203,10 +215,10 @@ export default function Carrito() {
 
             {/* Order Summary */}
             <div className='lg:col-span-1'>
-              <div className='bg-white rounded-lg shadow-md p-6 sticky top-4'>
-                <h2 className='text-xl font-semibold mb-4'>Resumen del pedido</h2>
-                
-                <div className='space-y-2 mb-4'>
+              <div className='sticky p-6 bg-white rounded-lg shadow-md top-4'>
+                <h2 className='mb-4 text-xl font-semibold'>Resumen del pedido</h2>
+
+                <div className='mb-4 space-y-2'>
                   <div className='flex justify-between text-gray-600'>
                     <span>Subtotal</span>
                     <span>${calculateSubtotal().toLocaleString('es-CL')}</span>
@@ -216,8 +228,8 @@ export default function Carrito() {
                     <span>Por calcular</span>
                   </div>
                 </div>
-                
-                <div className='border-t pt-4 mb-6'>
+
+                <div className='pt-4 mb-6 border-t'>
                   <div className='flex justify-between text-lg font-semibold'>
                     <span>Total</span>
                     <span>${calculateSubtotal().toLocaleString('es-CL')}</span>
@@ -234,7 +246,7 @@ export default function Carrito() {
                   Continuar compra
                 </button>
 
-                <p className='text-xs text-gray-500 text-center mt-4'>
+                <p className='mt-4 text-xs text-center text-gray-500'>
                   Los costos de envío se calcularán en el siguiente paso
                 </p>
               </div>
