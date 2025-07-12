@@ -53,6 +53,12 @@ export const productByIdQuery = groq`
   }
 `;
 
+export const productsByIdsQuery = groq`
+  *[_type == "product" && _id in $ids] {
+    ${productFields}
+  }
+`;
+
 export interface Painting {
   _id: string;
   name: string;
