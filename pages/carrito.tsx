@@ -129,12 +129,12 @@ export default function Carrito() {
           <div className='grid grid-cols-1 gap-8 lg:grid-cols-3'>
             {/* Cart Items */}
             <div className='space-y-4 lg:col-span-2'>
-              {items.map((item, index) => {
+              {items.map((item) => {
                 const product = getProduct(item.productId);
                 if (!product) return null;
 
                 return (
-                  <div key={index} className='p-6 bg-white rounded-lg shadow-md'>
+                  <div key={item.cartItemId || item.productId} className='p-6 bg-white rounded-lg shadow-md'>
                     <div className='flex flex-col gap-4 sm:flex-row'>
                       {/* Product Image */}
                       <div className='relative flex-shrink-0 w-full h-40 sm:w-32 sm:h-40'>
@@ -165,7 +165,7 @@ export default function Carrito() {
                             <button
                               onClick={() =>
                                 updateQuantity(
-                                  item.productId,
+                                  item.cartItemId || item.productId,
                                   Math.max(1, item.quantity - 1)
                                 )
                               }
@@ -176,7 +176,7 @@ export default function Carrito() {
                             <span className='w-12 text-center'>{item.quantity}</span>
                             <button
                               onClick={() =>
-                                updateQuantity(item.productId, item.quantity + 1)
+                                updateQuantity(item.cartItemId || item.productId, item.quantity + 1)
                               }
                               className='w-8 h-8 border border-gray-300 rounded-md hover:bg-gray-100'
                             >
@@ -185,7 +185,7 @@ export default function Carrito() {
                           </div>
 
                           <button
-                            onClick={() => removeFromCart(item.productId)}
+                            onClick={() => removeFromCart(item.cartItemId || item.productId)}
                             className='text-sm text-red-600 hover:text-red-800'
                           >
                             Eliminar
