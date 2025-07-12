@@ -6,7 +6,6 @@ import { getClient } from '@/sanity/lib/client';
 import { productsByIdsQuery } from '@/sanity/lib/queries';
 import Image from 'next/image';
 import { CartItemPrice } from '@/components/cart/CartItemPrice';
-import { CartVariationSwitcher } from '@/components/cart/CartVariationSwitcher';
 import { EmptyCart } from '@/components/cart/EmptyCart';
 
 export default function Carrito() {
@@ -125,8 +124,6 @@ export default function Carrito() {
     <main className='flex-grow bg-gray-100'>
       <section className='container flex-grow px-5 mx-auto space-y-8 py-14'>
         <TypographyH1 className='text-center'>Mi Carrito</TypographyH1>
-
-        <CartVariationSwitcher />
 
         <div className='max-w-6xl mx-auto'>
           <div className='grid grid-cols-1 gap-8 lg:grid-cols-3'>
