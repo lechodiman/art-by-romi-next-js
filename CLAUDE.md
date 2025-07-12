@@ -12,6 +12,7 @@ This is a Next.js e-commerce application for artist Romina Rivera, specializing 
 - **Sanity.io** CMS with GROQ queries
 - **Tailwind CSS** for styling
 - **React Context API** for cart state management
+- **Lucide React** for icons
 
 ## Essential Commands
 
