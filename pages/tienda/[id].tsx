@@ -7,6 +7,7 @@ import { GetStaticProps, GetStaticPaths } from 'next';
 import { getClient } from '@/sanity/lib/client';
 import { allProductsQuery, productByIdQuery } from '@/sanity/lib/queries';
 import { useCart } from '@/context/CartContext';
+import { toast } from 'sonner';
 
 interface CustomizationOption {
   id: string;
@@ -204,6 +205,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                     options: selectedOptions,
                     petCount: petCount,
                   });
+                  toast.success(`${product.name} agregado al carrito`);
                 }}
                 className='w-full px-6 py-3 text-white transition-colors rounded-md bg-zinc-700 hover:bg-zinc-600'
               >

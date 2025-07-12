@@ -4,6 +4,7 @@ import type { AppProps } from 'next/app';
 import { Playfair_Display } from 'next/font/google';
 import Head from 'next/head';
 import { CartProvider } from '@/context/CartContext';
+import { Toaster } from '@/components/ui/sonner';
 
 const playfair = Playfair_Display({
   variable: '--font-playfair',
@@ -71,6 +72,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <Layout>
           <Component {...pageProps} />
         </Layout>
+        <Toaster />
       </CartProvider>
     </main>
   );
