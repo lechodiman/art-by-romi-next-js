@@ -34,7 +34,7 @@ export default function Hero({ siteSettings }: HeroProps) {
             <p className='mt-2 tracking-widest uppercase'>{siteSettings.subtitle}</p>
 
             <div className='mt-12'>
-              <CustomLink href='/contacto' variant='primary' popup>
+              <CustomLink href='/tienda' variant='primary' popup>
                 QUIERO ENCARGAR UN RETRATO
               </CustomLink>
             </div>
