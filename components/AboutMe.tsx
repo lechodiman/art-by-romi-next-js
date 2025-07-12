@@ -30,8 +30,8 @@ export default function AboutMe({ aboutMe }: AboutMeProps) {
             <div className='space-y-4 md:w-1/2'>
               <PortableText value={aboutMe.text} />
               <div className='mt-6'>
-                <CustomLink href='/portafolio'>
-                  Ver Portafolio <ArrowRight className='inline-block w-5 h-5' />
+                <CustomLink href='/tienda'>
+                  Encargar un retrato <ArrowRight className='inline-block w-5 h-5' />
                 </CustomLink>
               </div>
             </div>

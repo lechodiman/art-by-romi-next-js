@@ -29,8 +29,8 @@ export default function Gallery({ featuredPaintings }: GalleryProps) {
           ))}
         </div>
         <div className='mt-10 text-center'>
-          <CustomLink href='/portafolio'>
-            Ver todo el portafolio <ArrowRight className='inline-block w-5 h-5' />
+          <CustomLink href='/tienda'>
+            Ver productos disponibles <ArrowRight className='inline-block w-5 h-5' />
           </CustomLink>
         </div>
       </div>

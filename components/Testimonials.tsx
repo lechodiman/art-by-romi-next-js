@@ -35,8 +35,8 @@ export default function Testimonials({ testimonials }: TestimonialsProps) {
             ))}
           </div>
 
-          <CustomLink variant='primary' href='/contacto'>
-            Ponte en contacto <ArrowRight className='inline-block w-5 h-5' />
+          <CustomLink variant='primary' href='/tienda'>
+            Encarga tu retrato personalizado <ArrowRight className='inline-block w-5 h-5' />
           </CustomLink>
         </div>
       </div>
