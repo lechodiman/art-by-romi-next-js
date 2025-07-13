@@ -59,6 +59,18 @@ export const productsByIdsQuery = groq`
   }
 `;
 
+export const activePricingConfigQuery = groq`
+  *[_type == "pricingConfig" && isActive == true] | order(validFrom desc)[0] {
+    _id,
+    name,
+    extraPets,
+    specialBackground,
+    framePrices,
+    isActive,
+    validFrom
+  }
+`;
+
 export interface Painting {
   _id: string;
   name: string;

@@ -6,6 +6,7 @@ interface CartItem {
   options: string[];
   petCount: string;
   cartItemId?: string;
+  calculatedPrice?: number; // Server-calculated price
 }
 
 type CartAction =
@@ -61,6 +62,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
         updatedItems[existingItemIndex] = {
           ...updatedItems[existingItemIndex],
           quantity: updatedItems[existingItemIndex].quantity + newItem.quantity,
+          calculatedPrice: newItem.calculatedPrice || updatedItems[existingItemIndex].calculatedPrice,
         };
         return { ...state, items: updatedItems };
       }

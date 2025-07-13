@@ -2,66 +2,25 @@ import { TypographyH1 } from '@/components/TypographyH1';
 import { Product } from '@/types/Product';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { GetStaticProps, GetStaticPaths } from 'next';
 import { getClient } from '@/sanity/lib/client';
 import { allProductsQuery, productByIdQuery } from '@/sanity/lib/queries';
 import { useCartActions } from '@/context/CartContext';
 import { toast } from 'sonner';
 
-interface CustomizationOption {
-  id: string;
-  name: string;
-  description: string | ((product: Product) => string);
-  price: number | ((product: Product) => number);
-  type?: 'checkbox' | 'select';
-  options?: { value: string; label: string; price: number }[];
+interface PriceBreakdown {
+  basePrice: number;
+  extraPetsPrice: number;
+  backgroundPrice: number;
+  framePrice: number;
 }
 
-const customizationOptions: CustomizationOption[] = [
-  {
-    id: 'extra-pet',
-    name: 'Agregar mascota(s) (opcional)',
-    description: 'Incluye mascota(s) adicional(es) en el retrato',
-    price: 0,
-    type: 'select',
-    options: [
-      { value: '0', label: 'Sin mascota adicional', price: 0 },
-      { value: '1', label: '1 mascota adicional (+$15.000)', price: 15000 },
-      { value: '2', label: '2 mascotas adicionales (+$20.000)', price: 20000 },
-    ],
-  },
-  {
-    id: 'special-background',
-    name: 'Fondo especial (opcional)',
-    description:
-      'Añade un fondo personalizado al retrato (+$5.000). Si no seleccionas esta opción, el fondo será de un solo color.',
-    price: 5000,
-    type: 'checkbox',
-  },
-  {
-    id: 'frame',
-    name: 'Añadir marco (opcional)',
-    description: (product: Product) => {
-      const prices = {
-        mini: 3000,
-        medium: 5000,
-        large: 7000,
-      };
-      const framePrice = product.size ? prices[product.size] : prices.medium;
-      return `Añade un marco decorativo al retrato (+$${framePrice.toLocaleString('es-CL')}). El retrato viene por defecto sin marco.`;
-    },
-    price: (product: Product) => {
-      const prices = {
-        mini: 3000,
-        medium: 5000,
-        large: 7000,
-      };
-      return product.size ? prices[product.size] : prices.medium;
-    },
-    type: 'checkbox',
-  },
-];
+interface PriceResponse {
+  basePrice: number;
+  totalPrice: number;
+  breakdown: PriceBreakdown;
+}
 
 interface ProductDetailProps {
   product: Product;
@@ -71,42 +30,52 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   const router = useRouter();
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [petCount, setPetCount] = useState('0');
+  const [totalPrice, setTotalPrice] = useState(product.price);
+  const [priceBreakdown, setPriceBreakdown] = useState<PriceBreakdown | null>(null);
+  const [isLoadingPrice, setIsLoadingPrice] = useState(false);
   const { addToCart } = useCartActions();
 
-  const calculateTotalPrice = () => {
-    const basePrice = product.price;
-    const optionsPrice = selectedOptions.reduce((total, optionId) => {
-      const option = customizationOptions.find((opt) => opt.id === optionId);
-      if (!option) return total;
-
-      if (option.id === 'extra-pet') {
-        const petOption = option.options?.find((opt) => opt.value === petCount);
-        return total + (petOption?.price || 0);
-      }
-
-      // Manejo específico para la opción de marco
-      if (option.id === 'frame') {
-        const prices = {
-          mini: 3000,
-          medium: 5000,
-          large: 7000,
+  // Fetch price from server whenever customizations change
+  useEffect(() => {
+    const fetchPrice = async () => {
+      setIsLoadingPrice(true);
+      try {
+        const customizations = {
+          extraPets: parseInt(petCount) || 0,
+          hasSpecialBackground: selectedOptions.includes('special-background'),
+          hasFrame: selectedOptions.includes('frame')
         };
 
-        // Validación del tamaño y precio por defecto
-        const framePrice =
-          product.size && prices[product.size] ? prices[product.size] : prices.medium; // Usamos medium como valor por defecto
+        const response = await fetch('/api/calculate-price', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            productId: product._id,
+            customizations
+          }),
+        });
 
-        console.log('Tamaño del producto:', product.size);
-        console.log('Precio del marco:', framePrice);
-
-        return total + framePrice;
+        if (response.ok) {
+          const data: PriceResponse = await response.json();
+          setTotalPrice(data.totalPrice);
+          setPriceBreakdown(data.breakdown);
+        } else {
+          console.error('Failed to calculate price');
+          // Fallback to base price on error
+          setTotalPrice(product.price);
+        }
+      } catch (error) {
+        console.error('Error calculating price:', error);
+        setTotalPrice(product.price);
+      } finally {
+        setIsLoadingPrice(false);
       }
+    };
 
-      // Para otras opciones (como fondo especial)
-      return total + (typeof option.price === 'number' ? option.price : 0);
-    }, 0);
-    return (basePrice + optionsPrice).toLocaleString('es-CL');
-  };
+    fetchPrice();
+  }, [product._id, product.price, selectedOptions, petCount]);
 
   const toggleOption = (optionId: string) => {
     setSelectedOptions((prev) =>
@@ -138,62 +107,90 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
               <div className='space-y-4'>
                 <h3 className='text-lg font-semibold text-gray-900'>Personalización</h3>
-                {customizationOptions.map((option) => (
-                  <div key={option.id} className='p-4 space-y-2 rounded-lg bg-gray-50'>
-                    {option.type === 'select' ? (
-                      <div>
-                        <label className='block mb-2 font-medium text-gray-900'>
-                          {option.name}
-                        </label>
-                        <select
-                          value={petCount}
-                          onChange={(e) => {
-                            setPetCount(e.target.value);
-                            if (e.target.value === '0') {
-                              setSelectedOptions((prev) =>
-                                prev.filter((id) => id !== option.id)
-                              );
-                            } else if (!selectedOptions.includes(option.id)) {
-                              setSelectedOptions((prev) => [...prev, option.id]);
-                            }
-                          }}
-                          className='w-full border-gray-300 rounded-md shadow-sm focus:border-zinc-500 focus:ring-zinc-500'
-                        >
-                          {option.options?.map((opt) => (
-                            <option key={opt.value} value={opt.value}>
-                              {opt.label}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    ) : (
-                      <label className='flex items-center space-x-2'>
-                        <input
-                          type='checkbox'
-                          checked={selectedOptions.includes(option.id)}
-                          onChange={() => toggleOption(option.id)}
-                          className='w-4 h-4 rounded text-zinc-700 focus:ring-zinc-500'
-                        />
-                        <span className='font-medium text-gray-900'>{option.name}</span>
-                      </label>
-                    )}
-                    <p className='text-sm text-gray-600'>
-                      {typeof option.description === 'function'
-                        ? option.description(product)
-                        : option.description}
-                    </p>
+                {/* Extra pets option */}
+                <div className='p-4 space-y-2 rounded-lg bg-gray-50'>
+                  <div>
+                    <label className='block mb-2 font-medium text-gray-900'>
+                      Agregar mascota(s) (opcional)
+                    </label>
+                    <select
+                      value={petCount}
+                      onChange={(e) => {
+                        setPetCount(e.target.value);
+                        if (e.target.value === '0') {
+                          setSelectedOptions((prev) =>
+                            prev.filter((id) => id !== 'extra-pet')
+                          );
+                        } else if (!selectedOptions.includes('extra-pet')) {
+                          setSelectedOptions((prev) => [...prev, 'extra-pet']);
+                        }
+                      }}
+                      className='w-full border-gray-300 rounded-md shadow-sm focus:border-zinc-500 focus:ring-zinc-500'
+                    >
+                      <option value='0'>Sin mascota adicional</option>
+                      <option value='1'>1 mascota adicional{priceBreakdown && petCount === '1' && ` (+$${priceBreakdown.extraPetsPrice.toLocaleString('es-CL')})`}</option>
+                      <option value='2'>2 mascotas adicionales{priceBreakdown && petCount === '2' && ` (+$${priceBreakdown.extraPetsPrice.toLocaleString('es-CL')})`}</option>
+                    </select>
                   </div>
-                ))}
+                  <p className='text-sm text-gray-600'>
+                    Incluye mascota(s) adicional(es) en el retrato
+                  </p>
+                </div>
+
+                {/* Special background option */}
+                <div className='p-4 space-y-2 rounded-lg bg-gray-50'>
+                  <label className='flex items-center space-x-2'>
+                    <input
+                      type='checkbox'
+                      checked={selectedOptions.includes('special-background')}
+                      onChange={() => toggleOption('special-background')}
+                      className='w-4 h-4 rounded text-zinc-700 focus:ring-zinc-500'
+                    />
+                    <span className='font-medium text-gray-900'>Fondo especial (opcional)</span>
+                  </label>
+                  <p className='text-sm text-gray-600'>
+                    Añade un fondo personalizado al retrato{priceBreakdown && priceBreakdown.backgroundPrice > 0 && ` (+$${priceBreakdown.backgroundPrice.toLocaleString('es-CL')})`}. Si no seleccionas esta opción, el fondo será de un solo color.
+                  </p>
+                </div>
+
+                {/* Frame option */}
+                <div className='p-4 space-y-2 rounded-lg bg-gray-50'>
+                  <label className='flex items-center space-x-2'>
+                    <input
+                      type='checkbox'
+                      checked={selectedOptions.includes('frame')}
+                      onChange={() => toggleOption('frame')}
+                      className='w-4 h-4 rounded text-zinc-700 focus:ring-zinc-500'
+                    />
+                    <span className='font-medium text-gray-900'>Añadir marco (opcional)</span>
+                  </label>
+                  <p className='text-sm text-gray-600'>
+                    Añade un marco decorativo al retrato{priceBreakdown && priceBreakdown.framePrice > 0 && ` (+$${priceBreakdown.framePrice.toLocaleString('es-CL')})`}. El retrato viene por defecto sin marco.
+                  </p>
+                </div>
               </div>
 
               <div className='pt-4 border-t border-gray-200'>
                 <p className='text-2xl font-bold text-gray-900'>
-                  ${calculateTotalPrice()}
+                  {isLoadingPrice ? (
+                    <span className='text-gray-400'>Calculando...</span>
+                  ) : (
+                    `$${totalPrice.toLocaleString('es-CL')}`
+                  )}
                 </p>
-                {selectedOptions.length > 0 && (
-                  <p className='text-sm text-gray-600'>
-                    Precio base: ${product.price.toLocaleString()}
-                  </p>
+                {(selectedOptions.length > 0 || parseInt(petCount) > 0) && priceBreakdown && (
+                  <div className='mt-2 space-y-1 text-sm text-gray-600'>
+                    <p>Precio base: ${product.price.toLocaleString('es-CL')}</p>
+                    {priceBreakdown.extraPetsPrice > 0 && (
+                      <p>Mascotas adicionales: +${priceBreakdown.extraPetsPrice.toLocaleString('es-CL')}</p>
+                    )}
+                    {priceBreakdown.backgroundPrice > 0 && (
+                      <p>Fondo especial: +${priceBreakdown.backgroundPrice.toLocaleString('es-CL')}</p>
+                    )}
+                    {priceBreakdown.framePrice > 0 && (
+                      <p>Marco: +${priceBreakdown.framePrice.toLocaleString('es-CL')}</p>
+                    )}
+                  </div>
                 )}
               </div>
 
@@ -204,12 +201,14 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                     quantity: 1,
                     options: selectedOptions,
                     petCount: petCount,
+                    calculatedPrice: totalPrice,
                   });
                   toast.success(`${product.name} agregado al carrito`);
                 }}
-                className='w-full px-6 py-3 text-white transition-colors rounded-md bg-zinc-700 hover:bg-zinc-600'
+                disabled={isLoadingPrice}
+                className='w-full px-6 py-3 text-white transition-colors rounded-md bg-zinc-700 hover:bg-zinc-600 disabled:bg-gray-400 disabled:cursor-not-allowed'
               >
-                Agregar al carrito
+                {isLoadingPrice ? 'Calculando precio...' : 'Agregar al carrito'}
               </button>
             </div>
           </div>
