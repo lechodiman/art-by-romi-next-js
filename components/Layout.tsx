@@ -5,8 +5,11 @@ import { InstagramIcon } from './InstagramIcon';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Fragment } from 'react';
-import { useCartItems } from '@/context/CartContext';
-import { Badge } from '@/components/ui/badge';
+import dynamic from 'next/dynamic';
+
+const CartBadge = dynamic(() => import('./CartBadge').then(mod => mod.CartBadge), {
+  ssr: false,
+});
 
 const navigation = {
   pages: [
@@ -19,8 +22,6 @@ const navigation = {
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const items = useCartItems();
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <div className='flex flex-col min-h-screen bg-white text-zinc-500'>
@@ -39,10 +40,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 >
                   {page.icon && <page.icon className='w-5 h-5' />}
                   {page.href !== '/carrito' && <span>{page.name}</span>}
-                  {page.href === '/carrito' && totalItems > 0 && (
-                    <Badge className="absolute -top-3 -right-3 px-1.5 py-0.5 text-xs bg-zinc-600 hover:bg-zinc-700 text-white">
-                      {totalItems}
-                    </Badge>
+                  {page.href === '/carrito' && (
+                    <CartBadge className="absolute -top-3 -right-3 px-1.5 py-0.5 text-xs bg-zinc-600 hover:bg-zinc-700 text-white" />
                   )}
                 </Link>
               ))}
@@ -81,10 +80,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       >
                         {page.icon && <page.icon className='w-5 h-5' />}
                         <span>{page.name}</span>
-                        {page.href === '/carrito' && totalItems > 0 && (
-                          <Badge className="ml-2 px-1.5 py-0.5 text-xs bg-zinc-600 hover:bg-zinc-700 text-white">
-                            {totalItems}
-                          </Badge>
+                        {page.href === '/carrito' && (
+                          <CartBadge className="ml-2 px-1.5 py-0.5 text-xs bg-zinc-600 hover:bg-zinc-700 text-white" />
                         )}
                       </Link>
                     </Menu.Item>

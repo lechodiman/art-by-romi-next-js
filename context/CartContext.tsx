@@ -1,4 +1,5 @@
-import { createContext, useContext, useReducer, useMemo } from 'react';
+import { createContext, useContext, useMemo } from 'react';
+import { usePersistedCartReducer } from '@/hooks/usePersistedCartReducer';
 
 export interface CartItem {
   productId: string;
@@ -109,8 +110,9 @@ const initialState: CartState = {
   items: [],
 };
 
+
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [state, dispatch] = useReducer(cartReducer, initialState);
+  const [state, dispatch] = usePersistedCartReducer(cartReducer, initialState);
 
   const selectors = useMemo(
     () => ({
@@ -133,7 +135,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         dispatch({ type: 'UPDATE_QUANTITY', payload: { cartItemId, quantity } }),
       clearCart: () => dispatch({ type: 'CLEAR_CART' }),
     }),
-    []
+    [dispatch]
   );
 
   const value = useMemo(
@@ -143,7 +145,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       selectors,
       actions,
     }),
-    [state, selectors, actions]
+    [state, selectors, actions, dispatch]
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
