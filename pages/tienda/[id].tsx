@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { GetStaticProps, GetStaticPaths } from 'next';
 import { getClient } from '@/sanity/lib/client';
 import { allProductsQuery, productByIdQuery } from '@/sanity/lib/queries';
-import { useCart } from '@/context/CartContext';
+import { useCartActions } from '@/context/CartContext';
 import { toast } from 'sonner';
 
 interface CustomizationOption {
@@ -71,7 +71,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
   const router = useRouter();
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [petCount, setPetCount] = useState('0');
-  const { addToCart } = useCart();
+  const { addToCart } = useCartActions();
 
   const calculateTotalPrice = () => {
     const basePrice = product.price;

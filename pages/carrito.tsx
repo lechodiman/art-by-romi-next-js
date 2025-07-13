@@ -1,5 +1,5 @@
 import { TypographyH1 } from '@/components/TypographyH1';
-import { useCart } from '@/context/CartContext';
+import { useCartItems, useCartActions } from '@/context/CartContext';
 import { useEffect, useState } from 'react';
 import { Product } from '@/types/Product';
 import { getClient } from '@/sanity/lib/client';
@@ -9,7 +9,8 @@ import { CartItemPrice } from '@/components/cart/CartItemPrice';
 import { EmptyCart } from '@/components/cart/EmptyCart';
 
 export default function Carrito() {
-  const { items, removeFromCart, updateQuantity } = useCart();
+  const items = useCartItems();
+  const { removeFromCart, updateQuantity } = useCartActions();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -134,7 +135,10 @@ export default function Carrito() {
                 if (!product) return null;
 
                 return (
-                  <div key={item.cartItemId || item.productId} className='p-6 bg-white rounded-lg shadow-md'>
+                  <div
+                    key={item.cartItemId || item.productId}
+                    className='p-6 bg-white rounded-lg shadow-md'
+                  >
                     <div className='flex flex-col gap-4 sm:flex-row'>
                       {/* Product Image */}
                       <div className='relative flex-shrink-0 w-full h-40 sm:w-32 sm:h-40'>
@@ -176,7 +180,10 @@ export default function Carrito() {
                             <span className='w-12 text-center'>{item.quantity}</span>
                             <button
                               onClick={() =>
-                                updateQuantity(item.cartItemId || item.productId, item.quantity + 1)
+                                updateQuantity(
+                                  item.cartItemId || item.productId,
+                                  item.quantity + 1
+                                )
                               }
                               className='w-8 h-8 border border-gray-300 rounded-md hover:bg-gray-100'
                             >
@@ -185,7 +192,9 @@ export default function Carrito() {
                           </div>
 
                           <button
-                            onClick={() => removeFromCart(item.cartItemId || item.productId)}
+                            onClick={() =>
+                              removeFromCart(item.cartItemId || item.productId)
+                            }
                             className='text-sm text-red-600 hover:text-red-800'
                           >
                             Eliminar

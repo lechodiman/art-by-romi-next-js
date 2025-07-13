@@ -5,7 +5,7 @@ import { InstagramIcon } from './InstagramIcon';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Fragment } from 'react';
-import { useCart } from '@/context/CartContext';
+import { useCartItems } from '@/context/CartContext';
 import { Badge } from '@/components/ui/badge';
 
 const navigation = {
@@ -19,7 +19,7 @@ const navigation = {
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const { items } = useCart();
+  const items = useCartItems();
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
