@@ -1,6 +1,7 @@
 import { TypographyH1 } from '@/components/TypographyH1';
 import { useCartItems, useCartActions } from '@/context/CartContext';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import { Product } from '@/types/Product';
 import { getClient } from '@/sanity/lib/client';
 import { productsByIdsQuery } from '@/sanity/lib/queries';
@@ -9,6 +10,7 @@ import { CartItemPrice } from '@/components/cart/CartItemPrice';
 import { EmptyCart } from '@/components/cart/EmptyCart';
 
 export default function Carrito() {
+  const router = useRouter();
   const items = useCartItems();
   const { removeFromCart, updateQuantity } = useCartActions();
   const [products, setProducts] = useState<Product[]>([]);
@@ -243,10 +245,7 @@ export default function Carrito() {
                 </div>
 
                 <button
-                  onClick={() => {
-                    // TODO: Implement checkout flow
-                    alert('Flujo de pago próximamente');
-                  }}
+                  onClick={() => router.push('/checkout')}
                   className='w-full px-6 py-3 text-white transition-colors rounded-md bg-zinc-700 hover:bg-zinc-600'
                 >
                   Continuar compra
