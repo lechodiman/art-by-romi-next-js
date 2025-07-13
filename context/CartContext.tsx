@@ -1,6 +1,6 @@
 import { createContext, useContext, useReducer, useMemo } from 'react';
 
-interface CartItem {
+export interface CartItem {
   productId: string;
   quantity: number;
   options: string[];
@@ -55,31 +55,36 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
     case 'ADD_TO_CART': {
       const newItem = action.payload;
-      const existingItemIndex = state.items.findIndex((item) => areItemsEqual(item, newItem));
-      
+      const existingItemIndex = state.items.findIndex((item) =>
+        areItemsEqual(item, newItem)
+      );
+
       if (existingItemIndex !== -1) {
         const updatedItems = [...state.items];
         updatedItems[existingItemIndex] = {
           ...updatedItems[existingItemIndex],
           quantity: updatedItems[existingItemIndex].quantity + newItem.quantity,
-          calculatedPrice: newItem.calculatedPrice || updatedItems[existingItemIndex].calculatedPrice,
+          calculatedPrice:
+            newItem.calculatedPrice || updatedItems[existingItemIndex].calculatedPrice,
         };
         return { ...state, items: updatedItems };
       }
-      
-      return { 
-        ...state, 
-        items: [...state.items, { ...newItem, cartItemId: generateCartItemId() }] 
+
+      return {
+        ...state,
+        items: [...state.items, { ...newItem, cartItemId: generateCartItemId() }],
       };
     }
-    
+
     case 'REMOVE_FROM_CART': {
       return {
         ...state,
-        items: state.items.filter((item) => item.cartItemId !== action.payload.cartItemId)
+        items: state.items.filter(
+          (item) => item.cartItemId !== action.payload.cartItemId
+        ),
       };
     }
-    
+
     case 'UPDATE_QUANTITY': {
       return {
         ...state,
@@ -87,52 +92,61 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
           item.cartItemId === action.payload.cartItemId
             ? { ...item, quantity: action.payload.quantity }
             : item
-        )
+        ),
       };
     }
-    
+
     case 'CLEAR_CART': {
       return { ...state, items: [] };
     }
-    
+
     default:
       return state;
   }
 };
 
 const initialState: CartState = {
-  items: []
+  items: [],
 };
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, initialState);
 
-  const selectors = useMemo(() => ({
-    getTotalItems: () => state.items.reduce((total, item) => total + item.quantity, 0),
-    getTotalUniqueItems: () => state.items.length,
-    getItemByCartId: (cartItemId: string) => state.items.find(item => item.cartItemId === cartItemId),
-    getItemsByProductId: (productId: string) => state.items.filter(item => item.productId === productId)
-  }), [state.items]);
-
-  const actions = useMemo(() => ({
-    addToCart: (item: CartItem) => dispatch({ type: 'ADD_TO_CART', payload: item }),
-    removeFromCart: (cartItemId: string) => dispatch({ type: 'REMOVE_FROM_CART', payload: { cartItemId } }),
-    updateQuantity: (cartItemId: string, quantity: number) => dispatch({ type: 'UPDATE_QUANTITY', payload: { cartItemId, quantity } }),
-    clearCart: () => dispatch({ type: 'CLEAR_CART' })
-  }), []);
-
-  const value = useMemo(() => ({
-    state,
-    dispatch,
-    selectors,
-    actions
-  }), [state, selectors, actions]);
-
-  return (
-    <CartContext.Provider value={value}>
-      {children}
-    </CartContext.Provider>
+  const selectors = useMemo(
+    () => ({
+      getTotalItems: () => state.items.reduce((total, item) => total + item.quantity, 0),
+      getTotalUniqueItems: () => state.items.length,
+      getItemByCartId: (cartItemId: string) =>
+        state.items.find((item) => item.cartItemId === cartItemId),
+      getItemsByProductId: (productId: string) =>
+        state.items.filter((item) => item.productId === productId),
+    }),
+    [state.items]
   );
+
+  const actions = useMemo(
+    () => ({
+      addToCart: (item: CartItem) => dispatch({ type: 'ADD_TO_CART', payload: item }),
+      removeFromCart: (cartItemId: string) =>
+        dispatch({ type: 'REMOVE_FROM_CART', payload: { cartItemId } }),
+      updateQuantity: (cartItemId: string, quantity: number) =>
+        dispatch({ type: 'UPDATE_QUANTITY', payload: { cartItemId, quantity } }),
+      clearCart: () => dispatch({ type: 'CLEAR_CART' }),
+    }),
+    []
+  );
+
+  const value = useMemo(
+    () => ({
+      state,
+      dispatch,
+      selectors,
+      actions,
+    }),
+    [state, selectors, actions]
+  );
+
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
 
 export function useCart() {
