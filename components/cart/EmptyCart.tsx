@@ -24,7 +24,7 @@ export function EmptyCart() {
   useEffect(() => {
     // Select random testimonial only on client side after hydration
     setTestimonialIndex(Math.floor(Math.random() * testimonials.length));
-  }, []);
+  }, [testimonials.length]);
   
   const randomTestimonial = testimonials[testimonialIndex];
 

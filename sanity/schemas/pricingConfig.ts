@@ -10,9 +10,9 @@ export const pricingConfig = defineType({
       title: 'Nombre',
       type: 'string',
       description: 'Nombre descriptivo de esta configuración',
-      validation: Rule => Rule.required()
+      validation: (Rule: any) => Rule.required()
     }),
-    defineField({
+    {
       name: 'extraPets',
       title: 'Precios por Mascotas Adicionales',
       type: 'object',
@@ -22,25 +22,25 @@ export const pricingConfig = defineType({
           title: 'Una Mascota Extra',
           type: 'number',
           description: 'Precio adicional por una mascota extra',
-          validation: Rule => Rule.required().min(0)
+          validation: (Rule: any) => Rule.required().min(0)
         }),
         defineField({
           name: 'twoPets',
           title: 'Dos Mascotas Extra',
           type: 'number',
           description: 'Precio adicional por dos mascotas extra',
-          validation: Rule => Rule.required().min(0)
+          validation: (Rule: any) => Rule.required().min(0)
         })
       ]
-    }),
+    },
     defineField({
       name: 'specialBackground',
       title: 'Precio Fondo Especial',
       type: 'number',
       description: 'Precio adicional por fondo personalizado',
-      validation: Rule => Rule.required().min(0)
+      validation: (Rule: any) => Rule.required().min(0)
     }),
-    defineField({
+    {
       name: 'framePrices',
       title: 'Precios de Marcos',
       type: 'object',
@@ -50,30 +50,30 @@ export const pricingConfig = defineType({
           title: 'Marco Mini',
           type: 'number',
           description: 'Precio del marco para tamaño mini',
-          validation: Rule => Rule.required().min(0)
+          validation: (Rule: any) => Rule.required().min(0)
         }),
         defineField({
           name: 'medium',
           title: 'Marco Mediano',
           type: 'number',
           description: 'Precio del marco para tamaño mediano',
-          validation: Rule => Rule.required().min(0)
+          validation: (Rule: any) => Rule.required().min(0)
         }),
         defineField({
           name: 'large',
           title: 'Marco Grande',
           type: 'number',
           description: 'Precio del marco para tamaño grande',
-          validation: Rule => Rule.required().min(0)
+          validation: (Rule: any) => Rule.required().min(0)
         })
       ]
-    }),
+    },
     defineField({
       name: 'isActive',
       title: 'Activo',
       type: 'boolean',
       description: 'Solo una configuración puede estar activa a la vez',
-      validation: Rule => Rule.required(),
+      validation: (Rule: any) => Rule.required(),
       initialValue: false
     }),
     defineField({
@@ -81,7 +81,7 @@ export const pricingConfig = defineType({
       title: 'Válido Desde',
       type: 'datetime',
       description: 'Fecha y hora desde cuando esta configuración es válida',
-      validation: Rule => Rule.required()
+      validation: (Rule: any) => Rule.required()
     })
   ],
   preview: {

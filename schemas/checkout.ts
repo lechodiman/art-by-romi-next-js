@@ -1,24 +1,25 @@
-import * as z from "zod";
+import * as z from 'zod';
 import { validateRUT, validateChileanPhone } from '@/lib/chile-locations';
 
 // Personal information schema (Step 1)
 export const personalInfoSchema = z.object({
-  firstName: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
-  lastName: z.string().min(2, "El apellido debe tener al menos 2 caracteres"),
+  firstName: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
+  lastName: z.string().min(2, 'El apellido debe tener al menos 2 caracteres'),
+  email: z.email('Email inválido'),
   rut: z.string().refine((val) => validateRUT(val), {
-    message: "RUT inválido",
+    message: 'RUT inválido',
   }),
   phone: z.string().refine((val) => validateChileanPhone(val), {
-    message: "Número de teléfono inválido. Debe ser un número chileno",
+    message: 'Número de teléfono inválido. Debe ser un número chileno',
   }),
 });
 
 // Shipping information schema (Step 2)
 export const shippingInfoSchema = z.object({
-  address: z.string().min(5, "La dirección debe tener al menos 5 caracteres"),
+  address: z.string().min(5, 'La dirección debe tener al menos 5 caracteres'),
   additionalInfo: z.string().optional(),
-  region: z.string().min(1, "Debes seleccionar una región"),
-  comuna: z.string().min(1, "Debes seleccionar una comuna"),
+  region: z.string().min(1, 'Debes seleccionar una región'),
+  comuna: z.string().min(1, 'Debes seleccionar una comuna'),
 });
 
 // Export step schemas for individual form use

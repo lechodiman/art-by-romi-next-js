@@ -26,6 +26,7 @@ export function ContactInfoForm({ onSubmit, defaultValues }: ContactInfoFormProp
     defaultValues: {
       firstName: defaultValues?.firstName || "",
       lastName: defaultValues?.lastName || "",
+      email: defaultValues?.email || "",
       rut: defaultValues?.rut || "",
       phone: defaultValues?.phone || "",
     },
@@ -70,6 +71,24 @@ export function ContactInfoForm({ onSubmit, defaultValues }: ContactInfoFormProp
               )}
             />
           </div>
+
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input 
+                    type="email"
+                    placeholder="correo@ejemplo.com" 
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <FormField
             control={form.control}

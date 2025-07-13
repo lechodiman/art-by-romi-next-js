@@ -30,6 +30,7 @@ export interface OrderData {
   customer: {
     firstName: string;
     lastName: string;
+    email: string;
     rut: string;
     phone: string;
     address: string;
@@ -51,6 +52,7 @@ export interface OrderData {
 export type CheckoutFormValues = {
   firstName: string;
   lastName: string;
+  email: string;
   rut: string;
   phone: string;
   address: string;
