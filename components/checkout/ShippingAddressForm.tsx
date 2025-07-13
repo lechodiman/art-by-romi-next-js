@@ -1,6 +1,5 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -20,15 +19,9 @@ import {
 } from "@/components/ui/select";
 import { getRegions, getDefaultRegion } from '@/lib/chile-locations';
 import { useChileanLocations } from '@/hooks/useChileanLocations';
+import { shippingInfoSchema, type ShippingInfo } from '@/schemas/checkout';
 
-const shippingAddressSchema = z.object({
-  address: z.string().min(5, "La dirección debe tener al menos 5 caracteres"),
-  additionalInfo: z.string().optional(),
-  region: z.string().min(1, "Debes seleccionar una región"),
-  comuna: z.string().min(1, "Debes seleccionar una comuna"),
-});
-
-export type ShippingAddressData = z.infer<typeof shippingAddressSchema>;
+export type ShippingAddressData = ShippingInfo;
 
 interface ShippingAddressFormProps {
   onSubmit: (data: ShippingAddressData) => void;
@@ -38,7 +31,7 @@ interface ShippingAddressFormProps {
 
 export function ShippingAddressForm({ onSubmit, onBack, defaultValues }: ShippingAddressFormProps) {
   const form = useForm<ShippingAddressData>({
-    resolver: zodResolver(shippingAddressSchema),
+    resolver: zodResolver(shippingInfoSchema),
     defaultValues: {
       address: defaultValues?.address || "",
       additionalInfo: defaultValues?.additionalInfo || "",

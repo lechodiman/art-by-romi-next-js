@@ -1,6 +1,5 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -11,20 +10,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { validateRUT, formatRUT, validateChileanPhone, formatChileanPhone } from '@/lib/chile-locations';
+import { formatRUT, formatChileanPhone } from '@/lib/chile-locations';
+import { personalInfoSchema, type PersonalInfo } from '@/schemas/checkout';
 
-const contactInfoSchema = z.object({
-  firstName: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
-  lastName: z.string().min(2, "El apellido debe tener al menos 2 caracteres"),
-  rut: z.string().refine((val) => validateRUT(val), {
-    message: "RUT inválido",
-  }),
-  phone: z.string().refine((val) => validateChileanPhone(val), {
-    message: "Número de teléfono inválido. Debe ser un número chileno",
-  }),
-});
-
-export type ContactInfoData = z.infer<typeof contactInfoSchema>;
+export type ContactInfoData = PersonalInfo;
 
 interface ContactInfoFormProps {
   onSubmit: (data: ContactInfoData) => void;
@@ -33,7 +22,7 @@ interface ContactInfoFormProps {
 
 export function ContactInfoForm({ onSubmit, defaultValues }: ContactInfoFormProps) {
   const form = useForm<ContactInfoData>({
-    resolver: zodResolver(contactInfoSchema),
+    resolver: zodResolver(personalInfoSchema),
     defaultValues: {
       firstName: defaultValues?.firstName || "",
       lastName: defaultValues?.lastName || "",
