@@ -14,6 +14,7 @@ This is a Next.js e-commerce application for artist Romina Rivera, specializing 
 - **shadcn/ui** for UI components
 - **React Context API** for cart state management
 - **Lucide React** for icons
+- **Supabase** for storing non-CMS data
 
 ## Essential Commands
 
