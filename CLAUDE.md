@@ -20,7 +20,10 @@ This is a Next.js e-commerce application for artist Romina Rivera, specializing 
 
 ```bash
 # Development
-npm run dev          # Start development server on http://localhost:3000
+npm run dev               # Start development server on http://localhost:3000
+npm run typegen           # Generate types from Sanity schemas
+npm run typegen:supabase  # Generate types from Supabase database
+npm run typegen:all       # Generate all types (Sanity + Supabase)
 
 # Production
 npm run build        # Create production build
@@ -32,11 +35,22 @@ npm run lint         # Run ESLint
 
 ## Architecture Overview
 
+### Type System
+- **Centralized Types**: All types are located in `types/` directory
+- **Auto-generation**: 
+  - Sanity types generated via `npm run typegen`
+  - Supabase types generated via `npm run typegen:supabase`
+- **Type Hierarchy**: Core domain types extended for different contexts (API, DB, UI)
+- **Runtime Validation**: Zod schemas validate external data
+- **Type Safety**: Full TypeScript coverage with strict mode
+- **Database Types**: Fully typed Supabase tables with insert/update/select types
+
 ### Content Management (Sanity)
 - **Studio Access**: `/studio` route provides admin interface
 - **Schemas**: Located in `sanity/schemas/` - defines product, painting, testimonial, and siteSettings
 - **Client**: Configured in `sanity/lib/client.ts` with project ID `dogtcd0u`
 - **Queries**: GROQ queries in `lib/queries.ts` fetch data at build time
+- **Type Generation**: Types auto-generated to `sanity.types.ts`
 
 ### Data Flow
 1. Content is managed in Sanity Studio
@@ -71,15 +85,40 @@ RECIPIENT_EMAIL=
 
 ## Important Patterns
 
-### Fetching Sanity Data
+### Type Imports
+```typescript
+// Import from centralized types
+import { CartItem, Product, Order } from '@/types'
+import { validateCartItem } from '@/types/validators/cart'
+```
+
+### Fetching Sanity Data with Types
 ```typescript
 // In pages using getStaticProps
 import { client } from '@/sanity/lib/client'
 import { groq } from 'next-sanity'
+import type { AllProductsQueryResult } from '@/sanity.types'
 
 export async function getStaticProps() {
-  const products = await client.fetch(groq`*[_type == "product"]`)
+  const products: AllProductsQueryResult = await client.fetch(groq`*[_type == "product"]`)
   return { props: { products }, revalidate: 60 }
+}
+```
+
+### Runtime Validation
+```typescript
+// Validate external data
+import { validateCheckoutRequest } from '@/types/validators/checkout'
+
+export async function POST(req: Request) {
+  const body = await req.json()
+  
+  try {
+    const validated = validateCheckoutRequest(body)
+    // Process validated data
+  } catch (error) {
+    // Handle validation error
+  }
 }
 ```
 
@@ -107,9 +146,9 @@ Products support:
 ### Adding a New Product Field
 1. Update schema in `sanity/schemas/product.ts`
 2. Deploy schema changes to Sanity
-3. Update TypeScript types in `types/index.ts`
+3. Run `npm run typegen` to regenerate types
 4. Modify queries in `lib/queries.ts` to include new field
-5. Update components that display products
+5. Update components that display products using new generated types
 
 ### Modifying Email Templates
 Email functionality is in `pages/api/contact.ts` using Nodemailer with Outlook SMTP.

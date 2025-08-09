@@ -3,8 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "typegen": "sanity schema extract --enforce-required-fields && sanity typegen generate",
+    "typegen:supabase": "supabase gen types typescript --project-id huihkhbfopershmkdyts --schema public > types/generated/database.types.ts",
+    "typegen:all": "npm run typegen && npm run typegen:supabase",
+    "dev": "npm run typegen && next dev",
+    "build": "npm run typegen && next build",
     "start": "next start",
     "lint": "next lint"
   },
