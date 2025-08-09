@@ -1,12 +1,12 @@
 import { TypographyH1 } from '@/components/TypographyH1';
 import ProductCard from '@/components/ProductCard';
-import { Product } from '@/types/Product';
+import type { AllProductsQueryResult } from '@/sanity.types';
 import { GetStaticProps } from 'next';
 import { getClient } from '@/sanity/lib/client';
 import { allProductsQuery } from '@/sanity/lib/queries';
 
 interface PageProps {
-  products: Product[];
+  products: AllProductsQueryResult;
 }
 
 export const getStaticProps: GetStaticProps<PageProps> = async () => {

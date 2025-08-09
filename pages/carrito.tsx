@@ -2,9 +2,11 @@ import { TypographyH1 } from '@/components/TypographyH1';
 import { useCartItems, useCartActions } from '@/context/CartContext';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Product } from '@/types/Product';
+import type { AllProductsQueryResult } from '@/sanity.types';
 import Image from 'next/image';
 import { EmptyCart } from '@/components/cart/EmptyCart';
+
+type Product = AllProductsQueryResult[number];
 
 interface PricedCartItem {
   cartItemId: string;
@@ -47,11 +49,7 @@ export default function Carrito() {
           cartItemId: item.cartItemId || '',
           productId: item.productId,
           quantity: item.quantity,
-          customizations: {
-            extraPets: parseInt(item.petCount) - 1,
-            hasSpecialBackground: item.options.includes('special-background'),
-            hasFrame: item.options.includes('frame'),
-          },
+          customizations: item.customizations || {},
         }));
 
         const response = await fetch('/api/calculate-cart-prices', {
@@ -163,7 +161,7 @@ export default function Carrito() {
                       {/* Product Image */}
                       <div className='relative flex-shrink-0 w-full h-40 sm:w-32 sm:h-40'>
                         <Image
-                          src={product.images[0]}
+                          src={product.images[0] || '/placeholder.jpg'}
                           alt={product.name}
                           fill
                           className='object-cover rounded-lg'

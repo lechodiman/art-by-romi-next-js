@@ -1,17 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
-import {
-  Order,
-  OrderItem,
-  PaymentIntent,
-  CreateOrderInput,
-  CreateOrderItemInput,
-  CreatePaymentIntentInput,
-  OrderStatus,
-  PaymentStatus,
-} from '@/types/database';
+import { Database, Tables, TablesInsert, TablesUpdate, Enums } from '@/types';
 
 // Create a Supabase client with the service role key for server-side operations
-const supabase = createClient(
+const supabase = createClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!,
   {
@@ -21,6 +12,16 @@ const supabase = createClient(
     },
   }
 );
+
+// Type aliases for cleaner code
+type Order = Tables<'orders'>;
+type OrderItem = Tables<'order_items'>;
+type PaymentIntent = Tables<'payment_intents'>;
+type CreateOrderInput = Omit<TablesInsert<'orders'>, 'id' | 'created_at' | 'updated_at' | 'order_number' | 'status'>;
+type CreateOrderItemInput = Omit<TablesInsert<'order_items'>, 'id' | 'created_at' | 'order_id'>;
+type CreatePaymentIntentInput = Omit<TablesInsert<'payment_intents'>, 'id' | 'created_at' | 'updated_at'>;
+type OrderStatus = Enums<'order_status'>;
+type PaymentStatus = Enums<'payment_status'>;
 
 export class OrderService {
   /**
@@ -46,7 +47,7 @@ export class OrderService {
         .insert({
           ...orderData,
           order_number: this.generateOrderNumber(),
-          status: 'pending' satisfies OrderStatus,
+          status: 'pending' as OrderStatus,
         })
         .select()
         .single();

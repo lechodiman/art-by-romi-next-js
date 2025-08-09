@@ -1,14 +1,17 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { z } from 'zod';
 import { OrderService } from '@/lib/services/order-service';
-import { CreateOrderInput, CreateOrderItemInput } from '@/types/database';
 import { client } from '@/sanity/lib/client';
 import { groq } from 'next-sanity';
 import { activePricingConfigQuery } from '@/sanity/lib/queries';
-import { PricingConfig } from '@/types/PricingConfig';
+import { PricingConfig, TablesInsert } from '@/types';
+import type { ProductsByIdsQueryResult } from '@/sanity.types';
 import { PriceCalculator } from '@/lib/pricing/service';
 import { normalizeCartItems } from '@/lib/pricing/helpers';
-import { Product } from '@/types/Product';
+
+type Product = ProductsByIdsQueryResult[number];
+type CreateOrderInput = Omit<TablesInsert<'orders'>, 'id' | 'created_at' | 'updated_at' | 'order_number' | 'status'>;
+type CreateOrderItemInput = Omit<TablesInsert<'order_items'>, 'id' | 'created_at' | 'order_id'>;
 
 // Request validation schema
 const createOrderSchema = z.object({
@@ -67,7 +70,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const productIds = items.map((item) => item.productId);
     const [pricingConfig, products] = await Promise.all([
       client.fetch<PricingConfig>(activePricingConfigQuery),
-      client.fetch<Product[]>(
+      client.fetch<ProductsByIdsQueryResult>(
         groq`*[_type == "product" && _id in $productIds] {
           _id,
           name,
@@ -126,7 +129,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           frame_size: undefined, // Not in customizations
           pet_names: item.customizations?.petNames,
           background_description: item.customizations?.backgroundDescription,
-          customizations: item.customizations,
+          customizations: item.customizations as any,
         };
       });
     

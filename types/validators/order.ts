@@ -41,7 +41,7 @@ export const paymentSchema = z.object({
   currency: z.string().length(3),
   transactionId: z.string().optional(),
   paymentDate: z.date().optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 export const shippingInfoSchema = z.object({

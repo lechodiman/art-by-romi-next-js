@@ -1,5 +1,6 @@
 import { TypographyH1 } from '@/components/TypographyH1';
-import { Product } from '@/types/Product';
+import { CartItem } from '@/types';
+import type { ProductByIdQueryResult, AllProductsQueryResult } from '@/sanity.types';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
@@ -8,6 +9,8 @@ import { getClient } from '@/sanity/lib/client';
 import { allProductsQuery, productByIdQuery } from '@/sanity/lib/queries';
 import { useCartActions } from '@/context/CartContext';
 import { toast } from 'sonner';
+
+type Product = NonNullable<ProductByIdQueryResult>;
 
 interface PriceBreakdown {
   basePrice: number;
@@ -92,7 +95,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
               {' '}
               {/* 125% = 5/4 = proporción vertical */}
               <Image
-                src={product.images[0]}
+                src={product.images[0] || '/placeholder.jpg'}
                 alt={product.name}
                 fill
                 className='object-cover rounded-lg'
@@ -226,13 +229,17 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
               <button
                 onClick={() => {
-                  addToCart({
+                  const cartItem: CartItem = {
+                    cartItemId: Math.random().toString(36).substring(2) + Date.now().toString(36),
                     productId: product._id,
                     quantity: 1,
-                    options: selectedOptions,
-                    petCount: petCount,
-                    calculatedPrice: totalPrice,
-                  });
+                    customizations: {
+                      extraPets: parseInt(petCount) || 0,
+                      hasSpecialBackground: selectedOptions.includes('special-background'),
+                      hasFrame: selectedOptions.includes('frame'),
+                    },
+                  };
+                  addToCart(cartItem);
                   toast.success(`${product.name} agregado al carrito`);
                 }}
                 disabled={isLoadingPrice}

@@ -1,12 +1,11 @@
-import { Product } from '@/types/Product';
+import { CartItem as BaseCartItem, CartItemCustomizations } from '@/types';
+import type { AllProductsQueryResult } from '@/sanity.types';
 
-export interface ItemCustomizations {
-  extraPets?: number;
-  hasSpecialBackground?: boolean;
-  hasFrame?: boolean;
-  petNames?: string[];
-  backgroundDescription?: string;
-}
+type Product = AllProductsQueryResult[number];
+
+// Re-export from centralized types for backward compatibility
+export type CartItem = BaseCartItem;
+export type ItemCustomizations = CartItemCustomizations;
 
 export interface PriceCalculationResult {
   basePrice: number;
@@ -19,13 +18,6 @@ export interface PriceBreakdown {
   extraPetsPrice: number;
   backgroundPrice: number;
   framePrice: number;
-}
-
-export interface CartItem {
-  cartItemId: string;
-  productId: string;
-  quantity: number;
-  customizations?: ItemCustomizations;
 }
 
 export interface ValidatedCartItem extends CartItem {

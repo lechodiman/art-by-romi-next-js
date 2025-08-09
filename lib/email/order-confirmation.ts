@@ -1,5 +1,8 @@
 import nodemailer from 'nodemailer';
-import { Order, OrderItem } from '@/types/database';
+import { Tables } from '@/types';
+
+type Order = Tables<'orders'>;
+type OrderItem = Tables<'order_items'>;
 
 interface OrderConfirmationEmailParams {
   order: Order;
@@ -39,7 +42,7 @@ const generateOrderConfirmationHTML = (params: OrderConfirmationEmailParams): st
     <tr>
       <td style="padding: 10px; border-bottom: 1px solid #eee;">
         <strong>${item.product_name}</strong>
-        ${item.pet_count > 1 ? `<br><small>${item.pet_count} mascotas</small>` : ''}
+        ${item.pet_count && item.pet_count > 1 ? `<br><small>${item.pet_count} mascotas</small>` : ''}
         ${item.has_special_background ? '<br><small>Con fondo especial</small>' : ''}
         ${item.has_frame ? `<br><small>Con marco (${item.frame_size || 'estándar'})</small>` : ''}
       </td>
@@ -106,7 +109,7 @@ const generateOrderConfirmationHTML = (params: OrderConfirmationEmailParams): st
                   ${formatCurrency(order.subtotal)}
                 </td>
               </tr>
-              ${order.shipping_cost > 0 ? `
+              ${order.shipping_cost && order.shipping_cost > 0 ? `
               <tr>
                 <td colspan="3" style="padding: 10px; text-align: right;">
                   Envío:
@@ -180,7 +183,7 @@ const generateOrderConfirmationText = (params: OrderConfirmationEmailParams): st
   
   const itemsList = items.map(item => {
     let description = `- ${item.product_name} x${item.quantity} - ${formatCurrency(item.total_price)}`;
-    if (item.pet_count > 1) description += ` (${item.pet_count} mascotas)`;
+    if (item.pet_count && item.pet_count > 1) description += ` (${item.pet_count} mascotas)`;
     if (item.has_special_background) description += ' (con fondo especial)';
     if (item.has_frame) description += ` (con marco ${item.frame_size || 'estándar'})`;
     return description;
@@ -198,7 +201,7 @@ DETALLES DEL PEDIDO:
 ${itemsList}
 
 Subtotal: ${formatCurrency(order.subtotal)}
-${order.shipping_cost > 0 ? `Envío: ${formatCurrency(order.shipping_cost)}` : ''}
+${order.shipping_cost && order.shipping_cost > 0 ? `Envío: ${formatCurrency(order.shipping_cost)}` : ''}
 Total: ${formatCurrency(order.total)}
 
 INFORMACIÓN DE ENVÍO:

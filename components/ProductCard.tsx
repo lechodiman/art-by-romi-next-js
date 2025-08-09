@@ -1,6 +1,8 @@
-import { Product } from '@/types/Product';
+import type { AllProductsQueryResult } from '@/sanity.types';
 import Image from 'next/image';
 import Link from 'next/link';
+
+type Product = AllProductsQueryResult[number];
 
 interface ProductCardProps {
   product: Product;
@@ -15,7 +17,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           {' '}
           {/* 125% = 5/4 = proporción vertical */}
           <Image
-            src={product.images[0]}
+            src={product.images[0] || '/placeholder.jpg'}
             alt={product.name}
             fill
             className='object-cover'

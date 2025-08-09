@@ -18,28 +18,10 @@ export function useCheckoutSubmission() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [paymentIntent, setPaymentIntent] = useState<PaymentIntentResponse | null>(null);
 
-  // Convert CartItem options to customizations format
+  // Convert CartItem customizations to API format
   const cartItemToCustomizations = useCallback(
     (item: (typeof cartItems)[0]): CartCustomizations => {
-      const customizations: CartCustomizations = {};
-
-      // Convert petCount to number
-      const petCount = parseInt(item.petCount || '1', 10);
-      if (petCount > 1) {
-        customizations.extraPets = petCount - 1;
-      }
-
-      // Check for special background
-      if (item.options.includes('special-background')) {
-        customizations.hasSpecialBackground = true;
-      }
-
-      // Check for frame
-      if (item.options.includes('frame')) {
-        customizations.hasFrame = true;
-      }
-
-      return customizations;
+      return item.customizations || {};
     },
     []
   );

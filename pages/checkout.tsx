@@ -5,7 +5,7 @@ import { useCheckoutSubmission } from '@/hooks/useCheckoutSubmission';
 import { formatRUT, formatChileanPhone } from '@/lib/chile-locations';
 import { useRouter } from 'next/router';
 import { toast } from 'sonner';
-import { Product } from '@/types/Product';
+import { Product } from '@/types';
 import {
   CheckoutSteps,
   ContactInfoForm,
@@ -54,11 +54,7 @@ export default function Checkout() {
           cartItemId: item.cartItemId || '',
           productId: item.productId,
           quantity: item.quantity,
-          customizations: {
-            extraPets: parseInt(item.petCount) - 1,
-            hasSpecialBackground: item.options.includes('special-background'),
-            hasFrame: item.options.includes('frame'),
-          },
+          customizations: item.customizations || {},
         }));
 
         const response = await fetch('/api/calculate-cart-prices', {

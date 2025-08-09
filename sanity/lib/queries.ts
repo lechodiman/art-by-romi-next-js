@@ -1,6 +1,6 @@
 import { groq, PortableTextBlock } from 'next-sanity';
 
-const paintingFields = groq`
+const paintingFields = `
   _id,
   name,
   "image": image.asset->url
@@ -18,7 +18,7 @@ export const featuredPaintingsQuery = groq`
   }
 `;
 
-const productFields = groq`
+const productFields = `
   _id,
   name,
   description,

@@ -1,4 +1,6 @@
-import { Product } from './Product';
+import type { AllProductsQueryResult } from '../sanity.types';
+
+type Product = AllProductsQueryResult[number];
 
 export interface CartCustomizations {
   extraPets?: number;

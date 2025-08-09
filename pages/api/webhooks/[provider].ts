@@ -75,7 +75,7 @@ export default async function handler(
       await OrderService.updatePaymentIntent(paymentIntent.id, {
         status: webhookResult.status,
         provider_data: {
-          ...paymentIntent.provider_data,
+          ...(paymentIntent.provider_data as any || {}),
           webhookData: webhookResult.metadata
         }
       });

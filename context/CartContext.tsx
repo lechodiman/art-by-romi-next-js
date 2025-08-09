@@ -1,14 +1,6 @@
-import { createContext, useContext, useMemo } from 'react';
 import { usePersistedCartReducer } from '@/hooks/usePersistedCartReducer';
-
-export interface CartItem {
-  productId: string;
-  quantity: number;
-  options: string[];
-  petCount: string;
-  cartItemId?: string;
-  calculatedPrice?: number; // Server-calculated price
-}
+import { CartItem } from '@/types';
+import { createContext, useContext, useMemo } from 'react';
 
 type CartAction =
   | { type: 'ADD_TO_CART'; payload: CartItem }
@@ -44,11 +36,16 @@ const generateCartItemId = () => {
 };
 
 const areItemsEqual = (item1: CartItem, item2: CartItem) => {
+  const getPetCount = (item: CartItem) => (item.customizations?.extraPets || 0) + 1;
+  const hasBackground = (item: CartItem) =>
+    item.customizations?.hasSpecialBackground || false;
+  const hasFrame = (item: CartItem) => item.customizations?.hasFrame || false;
+
   return (
     item1.productId === item2.productId &&
-    item1.petCount === item2.petCount &&
-    item1.options.length === item2.options.length &&
-    item1.options.every((opt) => item2.options.includes(opt))
+    getPetCount(item1) === getPetCount(item2) &&
+    hasBackground(item1) === hasBackground(item2) &&
+    hasFrame(item1) === hasFrame(item2)
   );
 };
 
@@ -65,8 +62,6 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
         updatedItems[existingItemIndex] = {
           ...updatedItems[existingItemIndex],
           quantity: updatedItems[existingItemIndex].quantity + newItem.quantity,
-          calculatedPrice:
-            newItem.calculatedPrice || updatedItems[existingItemIndex].calculatedPrice,
         };
         return { ...state, items: updatedItems };
       }
@@ -109,7 +104,6 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
 const initialState: CartState = {
   items: [],
 };
-
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = usePersistedCartReducer(cartReducer, initialState);

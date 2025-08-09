@@ -8,8 +8,8 @@ import crypto from 'crypto';
 import { PriceCalculator } from '@/lib/pricing/service';
 import { normalizeCartItems, toPaymentItems } from '@/lib/pricing/helpers';
 import { activePricingConfigQuery } from '@/sanity/lib/queries';
-import { PricingConfig } from '@/types/PricingConfig';
-import { Product } from '@/types/Product';
+import { PricingConfig } from '@/types';
+import type { ProductsByIdsQueryResult } from '@/sanity.types';
 
 // Request validation schema
 const createPaymentIntentSchema = z.object({
@@ -78,14 +78,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         status: existingIntent.status,
         amount: existingIntent.amount,
         currency: existingIntent.currency,
-        redirectUrl: existingIntent.provider_data?.redirectUrl,
+        redirectUrl: (existingIntent.provider_data as any)?.redirectUrl,
       });
     }
 
     // Fetch product details and pricing config from Sanity
     const productIds = items.map((item) => item.productId);
     const [products, pricingConfig] = await Promise.all([
-      client.fetch<Product[]>(
+      client.fetch<ProductsByIdsQueryResult>(
         groq`*[_type == "product" && _id in $productIds] {
           _id,
           name,

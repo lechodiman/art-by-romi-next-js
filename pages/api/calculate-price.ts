@@ -1,10 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { client } from '@/sanity/lib/client'
 import { productByIdQuery, activePricingConfigQuery } from '@/sanity/lib/queries'
-import { Product } from '@/types/Product'
-import { PricingConfig } from '@/types/PricingConfig'
+import { PricingConfig, CartItemCustomizations } from '@/types'
+import type { ProductByIdQueryResult } from '@/sanity.types'
 import { PriceCalculator } from '@/lib/pricing/service'
-import { ItemCustomizations } from '@/lib/pricing/types'
+
+type ItemCustomizations = CartItemCustomizations
+type Product = NonNullable<ProductByIdQueryResult>
 
 interface CalculatePriceRequest {
   productId: string
@@ -42,7 +44,7 @@ export default async function handler(
 
     // Fetch product and pricing config from Sanity
     const [product, pricingConfig] = await Promise.all([
-      client.fetch<Product>(productByIdQuery, { id: productId }),
+      client.fetch<ProductByIdQueryResult>(productByIdQuery, { id: productId }),
       client.fetch<PricingConfig>(activePricingConfigQuery)
     ])
 

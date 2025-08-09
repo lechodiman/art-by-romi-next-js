@@ -1,4 +1,4 @@
-import { CartItem } from '@/context/CartContext';
+import { CartItem } from '@/types';
 import { usePersistedReducer } from './usePersistedReducer';
 
 interface CartState {

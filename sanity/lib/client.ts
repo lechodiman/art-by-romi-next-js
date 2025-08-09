@@ -1,7 +1,7 @@
 import { createClient, SanityClient } from 'next-sanity';
 
 import { apiVersion, dataset, projectId, useCdn } from '../env';
-import { Product } from '@/types/Product';
+import type { AllProductsQueryResult, ProductByIdQueryResult } from '@/sanity.types';
 import {
   allPaintingsQuery,
   siteSettingsQuery,
@@ -25,14 +25,14 @@ export async function getSiteSettings(client: SanityClient) {
   return await client.fetch(siteSettingsQuery);
 }
 
-export async function getAllProducts(client: SanityClient): Promise<Product[]> {
+export async function getAllProducts(client: SanityClient): Promise<AllProductsQueryResult> {
   return await client.fetch(allProductsQuery);
 }
 
 export async function getProduct(
   client: SanityClient,
   id: string
-): Promise<Product | null> {
+): Promise<ProductByIdQueryResult> {
   return await client.fetch(productByIdQuery, { id });
 }
 

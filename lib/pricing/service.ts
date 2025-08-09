@@ -1,5 +1,7 @@
-import { Product } from '@/types/Product'
-import { PricingConfig } from '@/types/PricingConfig'
+import { PricingConfig } from '@/types'
+import type { AllProductsQueryResult } from '@/sanity.types'
+
+type Product = AllProductsQueryResult[number]
 import {
   ItemCustomizations,
   PriceCalculationResult,
@@ -34,28 +36,28 @@ export class PriceCalculator {
     let totalPrice = product.price
 
     // Calculate extra pets cost
-    if (customizations?.extraPets) {
+    if (customizations?.extraPets && this.pricingConfig.extraPets) {
       if (customizations.extraPets === 1) {
-        breakdown.extraPetsPrice = this.pricingConfig.extraPets.onePet
-        totalPrice += this.pricingConfig.extraPets.onePet
+        breakdown.extraPetsPrice = this.pricingConfig.extraPets.onePet || 0
+        totalPrice += this.pricingConfig.extraPets.onePet || 0
       } else if (customizations.extraPets === 2) {
-        breakdown.extraPetsPrice = this.pricingConfig.extraPets.twoPets
-        totalPrice += this.pricingConfig.extraPets.twoPets
+        breakdown.extraPetsPrice = this.pricingConfig.extraPets.twoPets || 0
+        totalPrice += this.pricingConfig.extraPets.twoPets || 0
       } else if (customizations.extraPets > 2) {
         throw new Error('Maximum 2 extra pets allowed')
       }
     }
 
     // Calculate special background cost
-    if (customizations?.hasSpecialBackground) {
+    if (customizations?.hasSpecialBackground && this.pricingConfig.specialBackground) {
       breakdown.backgroundPrice = this.pricingConfig.specialBackground
       totalPrice += this.pricingConfig.specialBackground
     }
 
     // Calculate frame cost based on product size
-    if (customizations?.hasFrame && product.size) {
+    if (customizations?.hasFrame && product.size && this.pricingConfig.framePrices) {
       const framePrice = this.pricingConfig.framePrices[
-        product.size as keyof PricingConfig['framePrices']
+        product.size as keyof NonNullable<PricingConfig['framePrices']>
       ]
       if (framePrice) {
         breakdown.framePrice = framePrice

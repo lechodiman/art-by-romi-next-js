@@ -24,6 +24,12 @@ export * from './validators/checkout';
 export * from './validators/order';
 export * from './validators/product';
 
-// Re-export generated types
-export * from '../sanity.types';
+// Re-export generated types (excluding conflicts)
 export * from './generated/database.types';
+export { 
+  type Product as SanityProduct,
+  type AllProductsQueryResult,
+  type ProductByIdQueryResult,
+  type ProductsByIdsQueryResult,
+  type ActivePricingConfigQueryResult
+} from '../sanity.types';
