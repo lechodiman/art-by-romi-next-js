@@ -1,5 +1,3 @@
-import { Order, OrderItem } from '@/types/database';
-
 // Common types for all payment providers
 export interface PaymentProviderConfig {
   apiKey: string;
@@ -79,25 +77,25 @@ export interface RefundResponse {
 // Base interface that all payment providers must implement
 export interface PaymentProvider {
   name: string;
-  
+
   // Initialize the provider with configuration
   initialize(config: PaymentProviderConfig): void;
-  
+
   // Create a payment intent
   createPaymentIntent(params: CreatePaymentIntentParams): Promise<PaymentIntentResponse>;
-  
+
   // Retrieve payment status
   getPaymentStatus(paymentId: string): Promise<PaymentIntentResponse>;
-  
+
   // Process webhook events
   processWebhook(params: ProcessWebhookParams): Promise<WebhookResponse>;
-  
+
   // Cancel a payment
   cancelPayment(paymentId: string): Promise<void>;
-  
+
   // Refund a payment (optional)
   refundPayment?(params: RefundParams): Promise<RefundResponse>;
-  
+
   // Get available payment methods (optional)
   getAvailablePaymentMethods?(): Promise<string[]>;
 }

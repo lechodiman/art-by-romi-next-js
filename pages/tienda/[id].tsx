@@ -27,7 +27,6 @@ interface ProductDetailProps {
 }
 
 export default function ProductDetail({ product }: ProductDetailProps) {
-  const router = useRouter();
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [petCount, setPetCount] = useState('0');
   const [totalPrice, setTotalPrice] = useState(product.price);
@@ -43,7 +42,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
         const customizations = {
           extraPets: parseInt(petCount) || 0,
           hasSpecialBackground: selectedOptions.includes('special-background'),
-          hasFrame: selectedOptions.includes('frame')
+          hasFrame: selectedOptions.includes('frame'),
         };
 
         const response = await fetch('/api/calculate-price', {
@@ -53,7 +52,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
           },
           body: JSON.stringify({
             productId: product._id,
-            customizations
+            customizations,
           }),
         });
 
@@ -128,8 +127,18 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                       className='w-full border-gray-300 rounded-md shadow-sm focus:border-zinc-500 focus:ring-zinc-500'
                     >
                       <option value='0'>Sin mascota adicional</option>
-                      <option value='1'>1 mascota adicional{priceBreakdown && petCount === '1' && ` (+$${priceBreakdown.extraPetsPrice.toLocaleString('es-CL')})`}</option>
-                      <option value='2'>2 mascotas adicionales{priceBreakdown && petCount === '2' && ` (+$${priceBreakdown.extraPetsPrice.toLocaleString('es-CL')})`}</option>
+                      <option value='1'>
+                        1 mascota adicional
+                        {priceBreakdown &&
+                          petCount === '1' &&
+                          ` (+$${priceBreakdown.extraPetsPrice.toLocaleString('es-CL')})`}
+                      </option>
+                      <option value='2'>
+                        2 mascotas adicionales
+                        {priceBreakdown &&
+                          petCount === '2' &&
+                          ` (+$${priceBreakdown.extraPetsPrice.toLocaleString('es-CL')})`}
+                      </option>
                     </select>
                   </div>
                   <p className='text-sm text-gray-600'>
@@ -146,10 +155,16 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                       onChange={() => toggleOption('special-background')}
                       className='w-4 h-4 rounded text-zinc-700 focus:ring-zinc-500'
                     />
-                    <span className='font-medium text-gray-900'>Fondo especial (opcional)</span>
+                    <span className='font-medium text-gray-900'>
+                      Fondo especial (opcional)
+                    </span>
                   </label>
                   <p className='text-sm text-gray-600'>
-                    Añade un fondo personalizado al retrato{priceBreakdown && priceBreakdown.backgroundPrice > 0 && ` (+$${priceBreakdown.backgroundPrice.toLocaleString('es-CL')})`}. Si no seleccionas esta opción, el fondo será de un solo color.
+                    Añade un fondo personalizado al retrato
+                    {priceBreakdown &&
+                      priceBreakdown.backgroundPrice > 0 &&
+                      ` (+$${priceBreakdown.backgroundPrice.toLocaleString('es-CL')})`}
+                    . Si no seleccionas esta opción, el fondo será de un solo color.
                   </p>
                 </div>
 
@@ -162,10 +177,16 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                       onChange={() => toggleOption('frame')}
                       className='w-4 h-4 rounded text-zinc-700 focus:ring-zinc-500'
                     />
-                    <span className='font-medium text-gray-900'>Añadir marco (opcional)</span>
+                    <span className='font-medium text-gray-900'>
+                      Añadir marco (opcional)
+                    </span>
                   </label>
                   <p className='text-sm text-gray-600'>
-                    Añade un marco decorativo al retrato{priceBreakdown && priceBreakdown.framePrice > 0 && ` (+$${priceBreakdown.framePrice.toLocaleString('es-CL')})`}. El retrato viene por defecto sin marco.
+                    Añade un marco decorativo al retrato
+                    {priceBreakdown &&
+                      priceBreakdown.framePrice > 0 &&
+                      ` (+$${priceBreakdown.framePrice.toLocaleString('es-CL')})`}
+                    . El retrato viene por defecto sin marco.
                   </p>
                 </div>
               </div>
@@ -178,20 +199,29 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                     `$${totalPrice.toLocaleString('es-CL')}`
                   )}
                 </p>
-                {(selectedOptions.length > 0 || parseInt(petCount) > 0) && priceBreakdown && (
-                  <div className='mt-2 space-y-1 text-sm text-gray-600'>
-                    <p>Precio base: ${product.price.toLocaleString('es-CL')}</p>
-                    {priceBreakdown.extraPetsPrice > 0 && (
-                      <p>Mascotas adicionales: +${priceBreakdown.extraPetsPrice.toLocaleString('es-CL')}</p>
-                    )}
-                    {priceBreakdown.backgroundPrice > 0 && (
-                      <p>Fondo especial: +${priceBreakdown.backgroundPrice.toLocaleString('es-CL')}</p>
-                    )}
-                    {priceBreakdown.framePrice > 0 && (
-                      <p>Marco: +${priceBreakdown.framePrice.toLocaleString('es-CL')}</p>
-                    )}
-                  </div>
-                )}
+                {(selectedOptions.length > 0 || parseInt(petCount) > 0) &&
+                  priceBreakdown && (
+                    <div className='mt-2 space-y-1 text-sm text-gray-600'>
+                      <p>Precio base: ${product.price.toLocaleString('es-CL')}</p>
+                      {priceBreakdown.extraPetsPrice > 0 && (
+                        <p>
+                          Mascotas adicionales: +$
+                          {priceBreakdown.extraPetsPrice.toLocaleString('es-CL')}
+                        </p>
+                      )}
+                      {priceBreakdown.backgroundPrice > 0 && (
+                        <p>
+                          Fondo especial: +$
+                          {priceBreakdown.backgroundPrice.toLocaleString('es-CL')}
+                        </p>
+                      )}
+                      {priceBreakdown.framePrice > 0 && (
+                        <p>
+                          Marco: +${priceBreakdown.framePrice.toLocaleString('es-CL')}
+                        </p>
+                      )}
+                    </div>
+                  )}
               </div>
 
               <button

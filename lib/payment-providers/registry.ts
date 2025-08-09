@@ -19,11 +19,12 @@ const providerInstances: Map<string, PaymentProvider> = new Map();
  * @returns The payment provider instance
  */
 export function getPaymentProvider(
-  providerName: string,
+  providerName: keyof typeof providers,
   config?: PaymentProviderConfig
 ): PaymentProvider {
   // Check if provider exists
   const ProviderClass = providers[providerName.toLowerCase()];
+
   if (!ProviderClass) {
     throw new PaymentProviderError(
       `Payment provider '${providerName}' not found`,
@@ -34,7 +35,7 @@ export function getPaymentProvider(
 
   // Check cache for existing instance
   let provider = providerInstances.get(providerName);
-  
+
   if (!provider) {
     // Create new instance
     provider = new ProviderClass();
@@ -78,23 +79,22 @@ export function clearProviderCache(): void {
 
 // Helper function to get provider config from environment variables
 export function getProviderConfig(providerName: string): PaymentProviderConfig {
-  const envPrefix = `${providerName.toUpperCase()}_`;
-  
   switch (providerName.toLowerCase()) {
     case 'mercadopago':
       return {
         apiKey: process.env.MERCADOPAGO_ACCESS_TOKEN || '',
         webhookSecret: process.env.MERCADOPAGO_WEBHOOK_SECRET || '',
-        environment: (process.env.MERCADOPAGO_ENVIRONMENT as 'sandbox' | 'production') || 'sandbox',
+        environment:
+          (process.env.MERCADOPAGO_ENVIRONMENT as 'sandbox' | 'production') || 'sandbox',
       };
-    
+
     // Add more provider configs here
     // case 'stripe':
     //   return {
     //     apiKey: process.env.STRIPE_SECRET_KEY || '',
     //     webhookSecret: process.env.STRIPE_WEBHOOK_SECRET || '',
     //   };
-    
+
     default:
       throw new PaymentProviderError(
         `No configuration found for provider '${providerName}'`,

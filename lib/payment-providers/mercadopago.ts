@@ -9,11 +9,12 @@ import {
   WebhookResponse,
   RefundParams,
   RefundResponse,
-  PaymentProviderError
+  PaymentProviderError,
 } from './types';
 
 export class MercadoPagoProvider implements PaymentProvider {
   name = 'mercadopago';
+
   private client?: MercadoPagoConfig;
   private webhookSecret?: string;
 
@@ -30,14 +31,16 @@ export class MercadoPagoProvider implements PaymentProvider {
       accessToken: config.apiKey,
       options: {
         timeout: 5000,
-        idempotencyKey: crypto.randomUUID()
-      }
+        idempotencyKey: crypto.randomUUID(),
+      },
     });
 
     this.webhookSecret = config.webhookSecret;
   }
 
-  async createPaymentIntent(params: CreatePaymentIntentParams): Promise<PaymentIntentResponse> {
+  async createPaymentIntent(
+    params: CreatePaymentIntentParams
+  ): Promise<PaymentIntentResponse> {
     if (!this.client) {
       throw new PaymentProviderError(
         'MercadoPago client not initialized',
@@ -48,34 +51,37 @@ export class MercadoPagoProvider implements PaymentProvider {
 
     try {
       const preference = new Preference(this.client);
-      
+
       // Create preference for payment
       const preferenceData = {
         body: {
-          items: params.items.map(item => ({
+          items: params.items.map((item) => ({
             id: item.id,
             title: item.name,
             quantity: item.quantity,
             unit_price: item.unitPrice,
             description: item.description,
-            currency_id: params.currency || 'CLP'
+            currency_id: params.currency || 'CLP',
           })),
           payer: {
             name: params.customer.firstName,
             surname: params.customer.lastName,
             email: params.customer.email,
             phone: {
-              number: params.customer.phone
+              number: params.customer.phone,
             },
             identification: {
               type: 'RUT',
-              number: params.customer.rut
-            }
+              number: params.customer.rut,
+            },
           },
           back_urls: {
-            success: params.returnUrl || `${process.env.NEXT_PUBLIC_URL}/checkout/confirmacion`,
-            failure: params.cancelUrl || `${process.env.NEXT_PUBLIC_URL}/carrito`,
-            pending: params.returnUrl || `${process.env.NEXT_PUBLIC_URL}/checkout/confirmacion`
+            success:
+              params.returnUrl || `${process.env.NEXT_PUBLIC_URL}/checkout/confirmacion`,
+            failure:
+              params.cancelUrl || `${process.env.NEXT_PUBLIC_URL}/checkout/confirmacion`,
+            pending:
+              params.returnUrl || `${process.env.NEXT_PUBLIC_URL}/checkout/confirmacion`,
           },
           auto_return: 'approved',
           payment_methods: {
@@ -87,33 +93,33 @@ export class MercadoPagoProvider implements PaymentProvider {
           external_reference: params.orderId,
           metadata: {
             order_id: params.orderId,
-            ...params.metadata
-          }
-        }
+            ...params.metadata,
+          },
+        },
       };
 
-      const response = await preference.create(preferenceData);
+      const preferenceResponse = await preference.create(preferenceData);
 
-      if (!response.id || !response.init_point) {
+      if (!preferenceResponse.id || !preferenceResponse.init_point) {
         throw new PaymentProviderError(
           'Failed to create MercadoPago preference',
           'PREFERENCE_CREATION_FAILED',
           this.name,
-          response
+          preferenceResponse
         );
       }
 
       return {
-        id: response.id,
+        id: preferenceResponse.id,
         status: 'pending',
         amount: params.amount,
         currency: params.currency || 'CLP',
-        redirectUrl: response.init_point, // URL to redirect user for payment
+        redirectUrl: preferenceResponse.init_point, // URL to redirect user for payment
         additionalData: {
-          preferenceId: response.id,
-          sandboxInitPoint: response.sandbox_init_point,
-          initPoint: response.init_point
-        }
+          preferenceId: preferenceResponse.id,
+          sandboxInitPoint: preferenceResponse.sandbox_init_point,
+          initPoint: preferenceResponse.init_point,
+        },
       };
     } catch (error: any) {
       throw new PaymentProviderError(
@@ -139,7 +145,7 @@ export class MercadoPagoProvider implements PaymentProvider {
       const response = await payment.get({ id: paymentId });
 
       let status: PaymentIntentResponse['status'] = 'pending';
-      
+
       switch (response.status) {
         case 'approved':
           status = 'succeeded';
@@ -168,8 +174,8 @@ export class MercadoPagoProvider implements PaymentProvider {
           payment_method_id: response.payment_method_id,
           payment_type_id: response.payment_type_id,
           date_approved: response.date_approved,
-          date_created: response.date_created
-        }
+          date_created: response.date_created,
+        },
       };
     } catch (error: any) {
       throw new PaymentProviderError(
@@ -183,16 +189,16 @@ export class MercadoPagoProvider implements PaymentProvider {
 
   async processWebhook(params: ProcessWebhookParams): Promise<WebhookResponse> {
     const { body, headers } = params;
-    
+
     // Verify webhook signature if secret is configured
     if (this.webhookSecret) {
       const xSignature = headers['x-signature'] as string;
       const xRequestId = headers['x-request-id'] as string;
-      
+
       if (!xSignature || !xRequestId) {
         return {
           success: false,
-          error: 'Missing webhook signature or request ID'
+          error: 'Missing webhook signature or request ID',
         };
       }
 
@@ -200,7 +206,7 @@ export class MercadoPagoProvider implements PaymentProvider {
       const parts = xSignature.split(',');
       let ts: string | null = null;
       let hash: string | null = null;
-      
+
       for (const part of parts) {
         const [key, value] = part.split('=');
         if (key && value) {
@@ -213,14 +219,14 @@ export class MercadoPagoProvider implements PaymentProvider {
           }
         }
       }
-      
+
       if (!ts || !hash) {
         return {
           success: false,
-          error: 'Invalid x-signature format'
+          error: 'Invalid x-signature format',
         };
       }
-      
+
       // Parse the body to get the data.id
       let parsedBody;
       try {
@@ -228,21 +234,21 @@ export class MercadoPagoProvider implements PaymentProvider {
       } catch (error) {
         return {
           success: false,
-          error: 'Invalid webhook body format'
+          error: 'Invalid webhook body format',
         };
       }
-      
+
       const dataId = parsedBody.data?.id;
       if (!dataId) {
         return {
           success: false,
-          error: 'Missing data.id in webhook body'
+          error: 'Missing data.id in webhook body',
         };
       }
 
       // Generate the manifest string
       const manifest = `id:${dataId};request-id:${xRequestId};ts:${ts};`;
-      
+
       // Create HMAC signature
       const hmac = crypto.createHmac('sha256', this.webhookSecret);
       hmac.update(manifest);
@@ -251,45 +257,49 @@ export class MercadoPagoProvider implements PaymentProvider {
       if (calculatedSignature !== hash) {
         return {
           success: false,
-          error: 'Invalid webhook signature'
+          error: 'Invalid webhook signature',
         };
       }
     }
 
     try {
       const event = JSON.parse(body.toString());
-      
+
       // Handle different webhook types
       switch (event.type) {
         case 'payment':
           const paymentId = event.data.id;
           const paymentStatus = await this.getPaymentStatus(paymentId.toString());
-          
+
           return {
             success: true,
             paymentId: paymentId.toString(),
-            status: paymentStatus.status === 'succeeded' ? 'succeeded' : 
-                   paymentStatus.status === 'failed' ? 'failed' : 'pending',
-            metadata: paymentStatus.metadata
+            status:
+              paymentStatus.status === 'succeeded'
+                ? 'succeeded'
+                : paymentStatus.status === 'failed'
+                  ? 'failed'
+                  : 'pending',
+            metadata: paymentStatus.metadata,
           };
-          
+
         case 'merchant_order':
           // Handle merchant order updates if needed
           return {
             success: true,
-            metadata: { type: 'merchant_order', data: event.data }
+            metadata: { type: 'merchant_order', data: event.data },
           };
-          
+
         default:
           return {
             success: true,
-            metadata: { type: event.type, data: event.data }
+            metadata: { type: event.type, data: event.data },
           };
       }
     } catch (error: any) {
       return {
         success: false,
-        error: error.message || 'Failed to process webhook'
+        error: error.message || 'Failed to process webhook',
       };
     }
   }
@@ -329,22 +339,25 @@ export class MercadoPagoProvider implements PaymentProvider {
       // MercadoPago refunds are handled through the API
       // The SDK doesn't expose a direct refund method, so we use the API directly
       const refundData = {
-        amount: params.amount
+        amount: params.amount,
       };
-      
+
       // Get the access token from the client config
       const accessToken = (this.client as any).accessToken;
-      
-      const response = await fetch(`https://api.mercadopago.com/v1/payments/${params.paymentId}/refunds`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-          'X-Idempotency-Key': crypto.randomUUID()
-        },
-        body: JSON.stringify(params.amount ? refundData : {})
-      });
-      
+
+      const response = await fetch(
+        `https://api.mercadopago.com/v1/payments/${params.paymentId}/refunds`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'X-Idempotency-Key': crypto.randomUUID(),
+          },
+          body: JSON.stringify(params.amount ? refundData : {}),
+        }
+      );
+
       if (!response.ok) {
         const error = await response.json();
         throw new PaymentProviderError(
@@ -354,14 +367,14 @@ export class MercadoPagoProvider implements PaymentProvider {
           error
         );
       }
-      
+
       const refund = await response.json();
-      
+
       return {
         id: refund.id.toString(),
         status: refund.status === 'approved' ? 'succeeded' : 'failed',
         amount: refund.amount,
-        currency: refund.currency_id || 'CLP'
+        currency: refund.currency_id || 'CLP',
       };
     } catch (error: any) {
       throw new PaymentProviderError(
@@ -375,12 +388,6 @@ export class MercadoPagoProvider implements PaymentProvider {
 
   async getAvailablePaymentMethods(): Promise<string[]> {
     // MercadoPago supports various payment methods depending on the country
-    return [
-      'credit_card',
-      'debit_card',
-      'bank_transfer',
-      'cash',
-      'mercadopago_wallet'
-    ];
+    return ['credit_card', 'debit_card', 'bank_transfer', 'cash', 'mercadopago_wallet'];
   }
 }

@@ -1,13 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
-import { 
-  Order, 
-  OrderItem, 
+import {
+  Order,
+  OrderItem,
   PaymentIntent,
   CreateOrderInput,
   CreateOrderItemInput,
   CreatePaymentIntentInput,
   OrderStatus,
-  PaymentStatus
+  PaymentStatus,
 } from '@/types/database';
 
 // Create a Supabase client with the service role key for server-side operations
@@ -17,8 +17,8 @@ const supabase = createClient(
   {
     auth: {
       autoRefreshToken: false,
-      persistSession: false
-    }
+      persistSession: false,
+    },
   }
 );
 
@@ -46,7 +46,7 @@ export class OrderService {
         .insert({
           ...orderData,
           order_number: this.generateOrderNumber(),
-          status: 'pending' as OrderStatus
+          status: 'pending' satisfies OrderStatus,
         })
         .select()
         .single();
@@ -56,14 +56,12 @@ export class OrderService {
       }
 
       // Create order items
-      const orderItems = items.map(item => ({
+      const orderItems = items.map((item) => ({
         ...item,
-        order_id: order.id
+        order_id: order.id,
       }));
 
-      const { error: itemsError } = await supabase
-        .from('order_items')
-        .insert(orderItems);
+      const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
 
       if (itemsError) {
         // Rollback by deleting the order
@@ -139,15 +137,12 @@ export class OrderService {
     metadata?: Record<string, any>
   ): Promise<boolean> {
     const updateData: any = { status };
-    
+
     if (metadata) {
       updateData.metadata = metadata;
     }
 
-    const { error } = await supabase
-      .from('orders')
-      .update(updateData)
-      .eq('id', orderId);
+    const { error } = await supabase.from('orders').update(updateData).eq('id', orderId);
 
     if (error) {
       console.error('Error updating order status:', error);
@@ -244,14 +239,17 @@ export class OrderService {
   /**
    * Check if an idempotency key exists
    */
-  static async checkIdempotencyKey(key: string): Promise<PaymentIntent | null> {
+  static async getPaymentIntentByIdempotencyKey(
+    key: string
+  ): Promise<PaymentIntent | null> {
     const { data, error } = await supabase
       .from('payment_intents')
       .select('*')
       .eq('idempotency_key', key)
       .single();
 
-    if (error && error.code !== 'PGRST116') { // Not found error
+    if (error && error.code !== 'PGRST116') {
+      // Not found error
       console.error('Error checking idempotency key:', error);
     }
 

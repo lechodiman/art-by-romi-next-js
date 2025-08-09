@@ -3,19 +3,17 @@ import { client } from '@/sanity/lib/client'
 import { productByIdQuery, activePricingConfigQuery } from '@/sanity/lib/queries'
 import { Product } from '@/types/Product'
 import { PricingConfig } from '@/types/PricingConfig'
+import { PriceCalculator } from '@/lib/pricing/service'
+import { ItemCustomizations } from '@/lib/pricing/types'
 
 interface CalculatePriceRequest {
   productId: string
-  customizations?: {
-    extraPets?: number
-    hasSpecialBackground?: boolean
-    hasFrame?: boolean
-  }
+  customizations?: ItemCustomizations
 }
 
 interface CalculatePriceResponse {
   basePrice: number
-  customizations: CalculatePriceRequest['customizations']
+  customizations: ItemCustomizations
   totalPrice: number
   pricingConfigId: string
   breakdown?: {
@@ -56,49 +54,25 @@ export default async function handler(
       return res.status(500).json({ error: 'Pricing configuration not found' })
     }
 
-    // Calculate price breakdown
-    const breakdown = {
-      basePrice: product.price,
-      extraPetsPrice: 0,
-      backgroundPrice: 0,
-      framePrice: 0
+    // Use centralized PriceCalculator
+    const calculator = new PriceCalculator(pricingConfig)
+    
+    try {
+      const priceResult = calculator.calculateItemPrice(product, customizations)
+      
+      res.status(200).json({
+        basePrice: priceResult.basePrice,
+        customizations: customizations || {},
+        totalPrice: priceResult.totalPrice,
+        pricingConfigId: calculator.getPricingConfigId(),
+        breakdown: priceResult.breakdown
+      })
+    } catch (error) {
+      console.error('Price calculation error:', error)
+      return res.status(400).json({ 
+        error: error instanceof Error ? error.message : 'Failed to calculate price' 
+      })
     }
-
-    let totalPrice = product.price
-
-    // Add extra pets cost
-    if (customizations?.extraPets) {
-      if (customizations.extraPets === 1) {
-        breakdown.extraPetsPrice = pricingConfig.extraPets.onePet
-        totalPrice += pricingConfig.extraPets.onePet
-      } else if (customizations.extraPets === 2) {
-        breakdown.extraPetsPrice = pricingConfig.extraPets.twoPets
-        totalPrice += pricingConfig.extraPets.twoPets
-      }
-    }
-
-    // Add special background cost
-    if (customizations?.hasSpecialBackground) {
-      breakdown.backgroundPrice = pricingConfig.specialBackground
-      totalPrice += pricingConfig.specialBackground
-    }
-
-    // Add frame cost based on product size
-    if (customizations?.hasFrame && product.size) {
-      const framePrice = pricingConfig.framePrices[product.size as keyof typeof pricingConfig.framePrices]
-      if (framePrice) {
-        breakdown.framePrice = framePrice
-        totalPrice += framePrice
-      }
-    }
-
-    res.status(200).json({
-      basePrice: product.price,
-      customizations: customizations,
-      totalPrice: totalPrice,
-      pricingConfigId: pricingConfig._id,
-      breakdown: breakdown
-    })
   } catch (error) {
     console.error('Price calculation error:', error)
     res.status(500).json({ error: 'Failed to calculate price' })

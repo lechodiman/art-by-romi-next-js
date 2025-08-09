@@ -6,6 +6,8 @@ import { client } from '@/sanity/lib/client';
 import { groq } from 'next-sanity';
 import { activePricingConfigQuery } from '@/sanity/lib/queries';
 import { PricingConfig } from '@/types/PricingConfig';
+import { PriceCalculator } from '@/lib/pricing/service';
+import { Product } from '@/types/Product';
 
 // Request validation schema
 const createOrderSchema = z.object({
@@ -14,67 +16,35 @@ const createOrderSchema = z.object({
     lastName: z.string().min(1),
     rut: z.string().min(1),
     phone: z.string().min(1),
-    email: z.string().email(),
+    email: z.email(),
     address: z.string().min(1),
     additionalInfo: z.string().optional(),
     region: z.string().min(1),
-    comuna: z.string().min(1)
+    comuna: z.string().min(1),
   }),
-  items: z.array(z.object({
-    productId: z.string(),
-    quantity: z.number().int().positive(),
-    customizations: z.object({
-      petCount: z.number().int().positive().default(1),
-      extraPets: z.number().int().min(0).default(0),
-      hasSpecialBackground: z.boolean().default(false),
-      hasFrame: z.boolean().default(false),
-      frameSize: z.string().optional(),
-      petNames: z.array(z.string()).optional(),
-      backgroundDescription: z.string().optional()
-    }).optional()
-  })),
+  items: z.array(
+    z.object({
+      productId: z.string(),
+      quantity: z.number().int().positive(),
+      customizations: z
+        .object({
+          petCount: z.number().int().positive().default(1),
+          extraPets: z.number().int().min(0).default(0),
+          hasSpecialBackground: z.boolean().default(false),
+          hasFrame: z.boolean().default(false),
+          frameSize: z.string().optional(),
+          petNames: z.array(z.string()).optional(),
+          backgroundDescription: z.string().optional(),
+        })
+        .optional(),
+    })
+  ),
   paymentIntentId: z.string().optional(), // Optional, for linking to payment
-  metadata: z.record(z.string(), z.any()).optional()
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
-// Helper to calculate item price using PricingConfig
-function calculateItemPrice(
-  basePrice: number,
-  customizations: any | undefined,
-  productSize: string | undefined,
-  pricingConfig: PricingConfig
-): number {
-  let totalPrice = basePrice;
-  
-  // Add extra pets cost
-  if (customizations?.extraPets) {
-    if (customizations.extraPets === 1) {
-      totalPrice += pricingConfig.extraPets.onePet;
-    } else if (customizations.extraPets === 2) {
-      totalPrice += pricingConfig.extraPets.twoPets;
-    }
-  }
-  
-  // Add special background cost
-  if (customizations?.hasSpecialBackground) {
-    totalPrice += pricingConfig.specialBackground;
-  }
-  
-  // Add frame cost based on product size
-  if (customizations?.hasFrame && productSize) {
-    const framePrice = pricingConfig.framePrices[productSize as keyof typeof pricingConfig.framePrices];
-    if (framePrice) {
-      totalPrice += framePrice;
-    }
-  }
-  
-  return Math.round(totalPrice);
-}
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -82,57 +52,57 @@ export default async function handler(
   try {
     // Validate request body
     const validationResult = createOrderSchema.safeParse(req.body);
-    
+
     if (!validationResult.success) {
       return res.status(400).json({
         error: 'Invalid request data',
-        details: validationResult.error.issues
+        details: validationResult.error.issues,
       });
     }
 
     const { customer, items, paymentIntentId, metadata } = validationResult.data;
 
-    // Fetch pricing config
-    const pricingConfig = await client.fetch<PricingConfig>(activePricingConfigQuery);
-    
+    // Fetch pricing config and products
+    const productIds = items.map((item) => item.productId);
+    const [pricingConfig, products] = await Promise.all([
+      client.fetch<PricingConfig>(activePricingConfigQuery),
+      client.fetch<Product[]>(
+        groq`*[_type == "product" && _id in $productIds] {
+          _id,
+          name,
+          slug,
+          price,
+          size
+        }`,
+        { productIds }
+      )
+    ]);
+
     if (!pricingConfig) {
       return res.status(500).json({ error: 'Pricing configuration not found' });
     }
 
-    // Fetch product details from Sanity
-    const productIds = items.map(item => item.productId);
-    const products = await client.fetch(
-      groq`*[_type == "product" && _id in $productIds] {
-        _id,
-        name,
-        slug,
-        price,
-        size
-      }`,
-      { productIds }
-    );
-
     if (!products || products.length !== items.length) {
       return res.status(400).json({ error: 'Invalid product IDs' });
     }
+
+    // Create price calculator
+    const calculator = new PriceCalculator(pricingConfig);
 
     // Calculate totals and prepare order items
     let subtotal = 0;
     const orderItems: CreateOrderItemInput[] = [];
 
     for (const item of items) {
-      const product = products.find((p: any) => p._id === item.productId);
+      const product = products.find((p) => p._id === item.productId);
       if (!product) {
         throw new Error(`Product ${item.productId} not found`);
       }
 
-      const unitPrice = calculateItemPrice(
-        product.price,
-        item.customizations,
-        product.size,
-        pricingConfig
-      );
-      
+      // Calculate price using centralized calculator
+      const priceResult = calculator.calculateItemPrice(product, item.customizations);
+      const unitPrice = priceResult.totalPrice;
+
       const totalPrice = unitPrice * item.quantity;
       subtotal += totalPrice;
 
@@ -140,7 +110,7 @@ export default async function handler(
         order_id: '', // Will be set after order creation
         product_id: product._id,
         product_name: product.name,
-        product_slug: product.slug?.current,
+        product_slug: undefined, // Product type doesn't have slug
         unit_price: unitPrice,
         quantity: item.quantity,
         total_price: totalPrice,
@@ -152,8 +122,8 @@ export default async function handler(
         background_description: item.customizations?.backgroundDescription,
         customizations: {
           ...item.customizations,
-          extraPets: item.customizations?.extraPets || 0
-        }
+          extraPets: item.customizations?.extraPets || 0,
+        },
       });
     }
 
@@ -173,8 +143,8 @@ export default async function handler(
       total: subtotal, // TODO: Add shipping cost
       metadata: {
         ...metadata,
-        paymentIntentId
-      }
+        paymentIntentId,
+      },
     };
 
     // Create order with items
@@ -194,16 +164,15 @@ export default async function handler(
         orderNumber: order.order_number,
         status: order.status,
         total: order.total,
-        createdAt: order.created_at
-      }
+        createdAt: order.created_at,
+      },
     });
-
   } catch (error: any) {
     console.error('Error creating order:', error);
-    
+
     res.status(500).json({
       error: 'Failed to create order',
-      message: error.message
+      message: error.message,
     });
   }
 }

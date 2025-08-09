@@ -5,6 +5,10 @@ import { OrderService } from '@/lib/services/order-service';
 import { client } from '@/sanity/lib/client';
 import { groq } from 'next-sanity';
 import crypto from 'crypto';
+import { PriceCalculator } from '@/lib/pricing/service';
+import { activePricingConfigQuery } from '@/sanity/lib/queries';
+import { PricingConfig } from '@/types/PricingConfig';
+import { Product } from '@/types/Product';
 
 // Request validation schema
 const createPaymentIntentSchema = z.object({
@@ -37,28 +41,6 @@ const createPaymentIntentSchema = z.object({
   cancelUrl: z.url().optional(),
 });
 
-// Helper to calculate item price based on customizations
-function calculateItemPrice(
-  basePrice: number,
-  customizations?: any,
-  extraPetPrice?: number
-): number {
-  let price = basePrice;
-
-  // Add extra pet charges
-  if (customizations?.petCount && customizations.petCount > 1 && extraPetPrice) {
-    price += (customizations.petCount - 1) * extraPetPrice;
-  }
-
-  // Add background charge (50% of base price)
-  if (customizations?.hasSpecialBackground) {
-    price *= 1.5;
-  }
-
-  // Frame prices are handled separately based on size
-
-  return Math.round(price); // Round to avoid decimal issues
-}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -86,7 +68,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .digest('hex');
 
     // Check if payment intent already exists
-    const existingIntent = await OrderService.checkIdempotencyKey(idempotencyKey);
+    const existingIntent =
+      await OrderService.getPaymentIntentByIdempotencyKey(idempotencyKey);
+
     if (existingIntent) {
       return res.status(200).json({
         id: existingIntent.provider_payment_id,
@@ -97,22 +81,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     }
 
-    // Fetch product details from Sanity
+    // Fetch product details and pricing config from Sanity
     const productIds = items.map((item) => item.productId);
-    const products = await client.fetch(
-      groq`*[_type == "product" && _id in $productIds] {
-        _id,
-        name,
-        slug,
-        price,
-        extraPetPrice
-      }`,
-      { productIds }
-    );
+    const [products, pricingConfig] = await Promise.all([
+      client.fetch<Product[]>(
+        groq`*[_type == "product" && _id in $productIds] {
+          _id,
+          name,
+          slug,
+          price,
+          size,
+          extraPetPrice
+        }`,
+        { productIds }
+      ),
+      client.fetch<PricingConfig>(activePricingConfigQuery)
+    ]);
 
     if (!products || products.length !== items.length) {
       return res.status(400).json({ error: 'Invalid product IDs' });
     }
+    
+    if (!pricingConfig) {
+      return res.status(500).json({ error: 'Pricing configuration not found' });
+    }
+    
+    // Create price calculator
+    const calculator = new PriceCalculator(pricingConfig);
 
     // Calculate total amount and prepare items for payment provider
     let totalAmount = 0;
@@ -122,11 +117,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         throw new Error(`Product ${item.productId} not found`);
       }
 
-      const unitPrice = calculateItemPrice(
-        product.price,
-        item.customizations,
-        product.extraPetPrice
-      );
+      // Convert petCount to extraPets for the calculator
+      const customizations = {
+        ...item.customizations,
+        extraPets: item.customizations?.petCount ? item.customizations.petCount - 1 : 0
+      };
+      
+      const priceResult = calculator.calculateItemPrice(product, customizations);
+      const unitPrice = priceResult.totalPrice;
 
       const itemTotal = unitPrice * item.quantity;
       totalAmount += itemTotal;
