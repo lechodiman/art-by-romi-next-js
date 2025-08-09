@@ -6,7 +6,7 @@ import { Product } from '@/types/Product';
 import Image from 'next/image';
 import { EmptyCart } from '@/components/cart/EmptyCart';
 
-interface ValidatedCartItem {
+interface PricedCartItem {
   cartItemId: string;
   productId: string;
   quantity: number;
@@ -14,40 +14,33 @@ interface ValidatedCartItem {
     extraPets?: number;
     hasSpecialBackground?: boolean;
     hasFrame?: boolean;
-    petNames?: string[];
-    backgroundDescription?: string;
   };
-  valid: boolean;
-  error?: string;
-  calculatedPrice?: number;
+  calculatedPrice: number;
   product?: Product;
 }
 
-interface ValidateCartResponse {
-  valid: boolean;
-  items: ValidatedCartItem[];
+interface CalculatePricesResponse {
+  items: PricedCartItem[];
   total: number;
-  pricingConfigId: string;
 }
 
 export default function Carrito() {
   const router = useRouter();
   const items = useCartItems();
   const { removeFromCart, updateQuantity } = useCartActions();
-  const [validatedItems, setValidatedItems] = useState<ValidatedCartItem[]>([]);
+  const [pricedItems, setPricedItems] = useState<PricedCartItem[]>([]);
   const [cartTotal, setCartTotal] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [validating, setValidating] = useState(false);
 
   useEffect(() => {
-    async function validateCart() {
+    async function calculatePrices() {
       if (items.length === 0) {
         setLoading(false);
-        setValidatedItems([]);
+        setPricedItems([]);
+        setCartTotal(0);
         return;
       }
 
-      setValidating(true);
       try {
         // Transform cart items to match API format
         const apiItems = items.map((item) => ({
@@ -55,13 +48,13 @@ export default function Carrito() {
           productId: item.productId,
           quantity: item.quantity,
           customizations: {
-            extraPets: parseInt(item.petCount) || 0,
+            extraPets: parseInt(item.petCount) - 1,
             hasSpecialBackground: item.options.includes('special-background'),
             hasFrame: item.options.includes('frame'),
           },
         }));
 
-        const response = await fetch('/api/validate-cart', {
+        const response = await fetch('/api/calculate-cart-prices', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -70,27 +63,26 @@ export default function Carrito() {
         });
 
         if (response.ok) {
-          const data: ValidateCartResponse = await response.json();
-          setValidatedItems(data.items);
+          const data: CalculatePricesResponse = await response.json();
+          setPricedItems(data.items);
           setCartTotal(data.total);
         } else {
-          console.error('Failed to validate cart');
+          console.error('Failed to calculate cart prices');
         }
       } catch (error) {
-        console.error('Error validating cart:', error);
+        console.error('Error calculating cart prices:', error);
       } finally {
         setLoading(false);
-        setValidating(false);
       }
     }
 
-    validateCart();
+    calculatePrices();
   }, [items]);
 
-  const getCustomizationText = (item: ValidatedCartItem) => {
+  const getCustomizationText = (item: PricedCartItem) => {
     const customizations = [];
 
-    if (item.customizations?.extraPets) {
+    if (item.customizations?.extraPets && item.customizations.extraPets > 0) {
       customizations.push(
         `+${item.customizations.extraPets} mascota${item.customizations.extraPets === 1 ? '' : 's'} adicional${item.customizations.extraPets === 1 ? '' : 'es'}`
       );
@@ -140,15 +132,15 @@ export default function Carrito() {
           <div className='grid grid-cols-1 gap-8 lg:grid-cols-3'>
             {/* Cart Items */}
             <div className='space-y-4 lg:col-span-2'>
-              {validatedItems.map((item) => {
-                if (!item.product || !item.valid) {
+              {pricedItems.map((item) => {
+                if (!item.product) {
                   return (
                     <div
                       key={item.cartItemId}
                       className='p-6 border border-red-200 rounded-lg shadow-md bg-red-50'
                     >
                       <p className='text-red-600'>
-                        {item.error || 'Producto no disponible'}
+                        Producto no disponible
                       </p>
                       <button
                         onClick={() => removeFromCart(item.cartItemId)}
@@ -195,14 +187,12 @@ export default function Carrito() {
 
                         {/* Price */}
                         <div className='text-lg font-semibold text-gray-900'>
-                          ${(item.calculatedPrice || 0).toLocaleString('es-CL')}
+                          ${item.calculatedPrice.toLocaleString('es-CL')}
                           {item.quantity > 1 && (
                             <span className='text-sm font-normal text-gray-600'>
                               {' '}
                               x {item.quantity} = $
-                              {(
-                                (item.calculatedPrice || 0) * item.quantity
-                              ).toLocaleString('es-CL')}
+                              {(item.calculatedPrice * item.quantity).toLocaleString('es-CL')}
                             </span>
                           )}
                         </div>
@@ -257,34 +247,22 @@ export default function Carrito() {
                 <div className='space-y-2'>
                   <div className='flex justify-between text-gray-600'>
                     <span>Subtotal</span>
-                    <span>
-                      {validating ? (
-                        <span className='text-gray-400'>Calculando...</span>
-                      ) : (
-                        `$${cartTotal.toLocaleString('es-CL')}`
-                      )}
-                    </span>
+                    <span>${cartTotal.toLocaleString('es-CL')}</span>
                   </div>
                   <div className='pt-2 mt-2 border-t border-gray-200'>
                     <div className='flex justify-between text-lg font-semibold text-gray-900'>
                       <span>Total</span>
-                      <span>
-                        {validating ? (
-                          <span className='text-gray-400'>Calculando...</span>
-                        ) : (
-                          `$${cartTotal.toLocaleString('es-CL')}`
-                        )}
-                      </span>
+                      <span>${cartTotal.toLocaleString('es-CL')}</span>
                     </div>
                   </div>
                 </div>
 
                 <button
                   onClick={() => router.push('/checkout')}
-                  disabled={validating || validatedItems.some((item) => !item.valid)}
+                  disabled={pricedItems.length === 0 || pricedItems.some(item => !item.product)}
                   className='w-full px-6 py-3 mt-6 text-white transition-colors rounded-md bg-zinc-700 hover:bg-zinc-600 disabled:bg-gray-400 disabled:cursor-not-allowed'
                 >
-                  {validating ? 'Validando carrito...' : 'Proceder al pago'}
+                  Proceder al pago
                 </button>
 
                 <p className='mt-4 text-xs text-center text-gray-500'>

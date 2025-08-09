@@ -6,6 +6,7 @@ import { client } from '@/sanity/lib/client';
 import { groq } from 'next-sanity';
 import crypto from 'crypto';
 import { PriceCalculator } from '@/lib/pricing/service';
+import { normalizeCartItems, toPaymentItems } from '@/lib/pricing/helpers';
 import { activePricingConfigQuery } from '@/sanity/lib/queries';
 import { PricingConfig } from '@/types/PricingConfig';
 import { Product } from '@/types/Product';
@@ -49,17 +50,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     // Validate request body
-    const validationResult = createPaymentIntentSchema.safeParse(req.body);
+    const requestValidation = createPaymentIntentSchema.safeParse(req.body);
 
-    if (!validationResult.success) {
+    if (!requestValidation.success) {
       return res.status(400).json({
         error: 'Invalid request data',
-        details: validationResult.error.issues,
+        details: requestValidation.error.issues,
       });
     }
 
     const { provider, orderId, items, customer, returnUrl, cancelUrl } =
-      validationResult.data;
+      requestValidation.data;
 
     // Generate idempotency key based on order ID
     const idempotencyKey = crypto
@@ -109,38 +110,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Create price calculator
     const calculator = new PriceCalculator(pricingConfig);
 
-    // Calculate total amount and prepare items for payment provider
-    let totalAmount = 0;
-    const paymentItems = items.map((item) => {
-      const product = products.find((p: any) => p._id === item.productId);
-      if (!product) {
-        throw new Error(`Product ${item.productId} not found`);
-      }
+    // Normalize items and validate cart
+    const normalizedItems = normalizeCartItems(items);
+    const validationResult = calculator.validateCart(normalizedItems, products);
 
-      // Convert petCount to extraPets for the calculator
-      const customizations = {
-        ...item.customizations,
-        extraPets: item.customizations?.petCount ? item.customizations.petCount - 1 : 0
-      };
-      
-      const priceResult = calculator.calculateItemPrice(product, customizations);
-      const unitPrice = priceResult.totalPrice;
+    // Check if all items are valid
+    if (!validationResult.valid) {
+      const errors = validationResult.items
+        .filter(item => !item.valid)
+        .map(item => ({ productId: item.productId, error: item.error }));
+      return res.status(400).json({ 
+        error: 'Invalid cart items', 
+        details: errors 
+      });
+    }
 
-      const itemTotal = unitPrice * item.quantity;
-      totalAmount += itemTotal;
-
-      return {
-        id: product._id,
-        name: product.name,
-        quantity: item.quantity,
-        unitPrice: unitPrice,
-        description: `${product.name}${
-          item.customizations?.petCount && item.customizations.petCount > 1
-            ? ` (${item.customizations.petCount} mascotas)`
-            : ''
-        }${item.customizations?.hasSpecialBackground ? ' con fondo especial' : ''}`,
-      };
-    });
+    // Prepare items for payment provider
+    const paymentItems = toPaymentItems(validationResult.items);
+    const totalAmount = validationResult.total;
 
     // Get payment provider
     const providerConfig = getProviderConfig(provider);

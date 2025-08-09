@@ -7,6 +7,7 @@ import { groq } from 'next-sanity';
 import { activePricingConfigQuery } from '@/sanity/lib/queries';
 import { PricingConfig } from '@/types/PricingConfig';
 import { PriceCalculator } from '@/lib/pricing/service';
+import { normalizeCartItems } from '@/lib/pricing/helpers';
 import { Product } from '@/types/Product';
 
 // Request validation schema
@@ -89,43 +90,47 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Create price calculator
     const calculator = new PriceCalculator(pricingConfig);
 
-    // Calculate totals and prepare order items
-    let subtotal = 0;
-    const orderItems: CreateOrderItemInput[] = [];
+    // Normalize items and validate cart
+    const normalizedItems = normalizeCartItems(items);
+    const cartValidation = calculator.validateCart(normalizedItems, products);
 
-    for (const item of items) {
-      const product = products.find((p) => p._id === item.productId);
-      if (!product) {
-        throw new Error(`Product ${item.productId} not found`);
-      }
-
-      // Calculate price using centralized calculator
-      const priceResult = calculator.calculateItemPrice(product, item.customizations);
-      const unitPrice = priceResult.totalPrice;
-
-      const totalPrice = unitPrice * item.quantity;
-      subtotal += totalPrice;
-
-      orderItems.push({
-        order_id: '', // Will be set after order creation
-        product_id: product._id,
-        product_name: product.name,
-        product_slug: undefined, // Product type doesn't have slug
-        unit_price: unitPrice,
-        quantity: item.quantity,
-        total_price: totalPrice,
-        pet_count: item.customizations?.petCount || 1,
-        has_special_background: item.customizations?.hasSpecialBackground || false,
-        has_frame: item.customizations?.hasFrame || false,
-        frame_size: item.customizations?.frameSize,
-        pet_names: item.customizations?.petNames,
-        background_description: item.customizations?.backgroundDescription,
-        customizations: {
-          ...item.customizations,
-          extraPets: item.customizations?.extraPets || 0,
-        },
+    // Check if all items are valid
+    if (!cartValidation.valid) {
+      const errors = cartValidation.items
+        .filter(item => !item.valid)
+        .map(item => ({ productId: item.productId, error: item.error }));
+      return res.status(400).json({ 
+        error: 'Invalid cart items', 
+        details: errors 
       });
     }
+
+    // Prepare order items from validated cart
+    const orderItems: CreateOrderItemInput[] = cartValidation.items
+      .filter(item => item.valid)
+      .map(item => {
+        const petCount = (item.customizations?.extraPets || 0) + 1;
+        const totalPrice = item.calculatedPrice! * item.quantity;
+        
+        return {
+          order_id: '', // Will be set after order creation
+          product_id: item.productId,
+          product_name: item.product!.name,
+          product_slug: undefined, // Product type doesn't have slug
+          unit_price: item.calculatedPrice!,
+          quantity: item.quantity,
+          total_price: totalPrice,
+          pet_count: petCount,
+          has_special_background: item.customizations?.hasSpecialBackground || false,
+          has_frame: item.customizations?.hasFrame || false,
+          frame_size: undefined, // Not in customizations
+          pet_names: item.customizations?.petNames,
+          background_description: item.customizations?.backgroundDescription,
+          customizations: item.customizations,
+        };
+      });
+    
+    const subtotal = cartValidation.total;
 
     // Create order data
     const orderData: CreateOrderInput = {

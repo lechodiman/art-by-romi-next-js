@@ -19,12 +19,6 @@ export interface ValidatedCartItem {
   product?: Product;
 }
 
-export interface ValidateCartResponse {
-  valid: boolean;
-  items: ValidatedCartItem[];
-  total: number;
-  pricingConfigId: string;
-}
 
 export interface OrderData {
   customer: {
@@ -40,12 +34,9 @@ export interface OrderData {
   };
   items: Array<{
     productId: string;
-    productName?: string;
     quantity: number;
-    price?: number;
     customizations?: CartCustomizations;
   }>;
-  total: number;
   createdAt: string;
 }
 
